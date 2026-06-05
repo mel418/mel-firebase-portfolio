@@ -1,81 +1,96 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { User, Briefcase, Play, Code, GraduationCap, Mail, Bot, Github, Library, FileText } from 'lucide-react';
+import Image from 'next/image';
+import { User, Briefcase, Play, Code, GraduationCap, Mail, Github, Library, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { useActiveSection } from '@/hooks/use-active-section';
 
-const navItems = [
-  { href: '/#profile', label: 'Profile', icon: User },
-  { href: '/#experience', label: 'Experience', icon: Briefcase },
-  { href: '/#projects', label: 'Projects', icon: Play },
-  { href: '/#skills', label: 'Skills', icon: Code },
-  { href: '/#education', label: 'Education', icon: GraduationCap },
-  { href: '/#contact', label: 'Contact', icon: Mail },
-];
-
-const aiTools = [
-  // { href: '/cover-letter', label: 'Cover Letter AI', icon: Bot },
-];
-
-const NavLink = ({ href, label, icon: Icon }: { href: string; label: string; icon: React.ElementType }) => {
-  const pathname = usePathname();
-  const isActive = pathname === href;
-
-  return (
-    <Link href={href} passHref>
-      <Button
-        variant={isActive ? 'secondary' : 'ghost'}
-        className={cn('w-full justify-start text-base py-6', isActive && 'text-primary')}
-        aria-current={isActive ? 'page' : undefined}
-      >
-        <Icon className="mr-3 h-5 w-5" />
-        {label}
-      </Button>
-    </Link>
-  );
+type NavItem = {
+  href: string;
+  label: string;
+  sublabel: string;
+  icon: React.ElementType;
+  id: string;
 };
 
-export function AppSidebar() {
+const navItems: NavItem[] = [
+  { href: '/#profile',    label: 'Melody Gatan', sublabel: 'Developer',     icon: User,          id: 'profile' },
+  { href: '/#experience', label: 'Experience',   sublabel: 'Playlist',   icon: Briefcase,     id: 'experience' },
+  { href: '/#projects',   label: 'Projects',     sublabel: 'Playlist',   icon: Play,          id: 'projects' },
+  { href: '/#skills',     label: 'Skills',       sublabel: 'Collection', icon: Code,          id: 'skills' },
+  { href: '/#education',  label: 'Education',    sublabel: 'Playlist',   icon: GraduationCap, id: 'education' },
+  { href: '/#contact',    label: 'Contact',      sublabel: 'Playlist',   icon: Mail,          id: 'contact' },
+];
+
+function EqualizerBars() {
   return (
-    <aside className="hidden lg:flex flex-col w-72 border-r bg-card h-screen fixed top-0 left-0 p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <Link href="/" className="text-3xl font-bold text-primary flex items-center gap-2 font-headline">
-          <Library className="h-8 w-8" />
-          Melody
-        </Link>
-        <ThemeToggle />
+    <div className="flex items-end gap-[2px] h-4 shrink-0">
+      <div className="w-[3px] bg-primary rounded-sm origin-bottom animate-bar-1" style={{ height: '12px' }} />
+      <div className="w-[3px] bg-primary rounded-sm origin-bottom animate-bar-2" style={{ height: '12px' }} />
+      <div className="w-[3px] bg-primary rounded-sm origin-bottom animate-bar-3" style={{ height: '12px' }} />
+    </div>
+  );
+}
+
+function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        'flex items-center gap-3 px-3 py-2 rounded-md transition-colors group',
+        isActive ? 'bg-accent' : 'hover:bg-accent/60'
+      )}
+    >
+      {item.id === 'profile' ? (
+        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
+          <Image src="/PFP2.JPG" alt="Melody Gatan" fill className="object-cover" sizes="40px" />
+        </div>
+      ) : (
+        <div className={cn(
+          'h-10 w-10 shrink-0 rounded-md flex items-center justify-center',
+          isActive ? 'bg-primary/20' : 'bg-muted'
+        )}>
+          <item.icon className={cn('h-5 w-5', isActive ? 'text-primary' : 'text-muted-foreground')} />
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className={cn('text-sm font-medium truncate', isActive && 'text-primary')}>{item.label}</p>
+        <p className="text-xs text-muted-foreground">{item.sublabel}</p>
       </div>
-      <nav className="flex flex-col space-y-2">
+      {isActive && <EqualizerBars />}
+    </Link>
+  );
+}
+
+export function AppSidebar() {
+  const activeId = useActiveSection();
+
+  return (
+    <aside className="flex flex-col h-full p-4 space-y-6">
+      <div className="flex items-center gap-2 px-1 pt-2">
+        <Library className="h-7 w-7 text-primary shrink-0" />
+        <span className="text-xl font-bold text-primary font-headline">Your Library</span>
+      </div>
+
+      <nav className="flex flex-col space-y-1 flex-1">
         {navItems.map((item) => (
-          <NavLink key={item.href} {...item} />
+          <NavItemRow key={item.href} item={item} isActive={activeId === item.id} />
         ))}
       </nav>
-      {/* {aiTools.length > 0 && <Separator />}
-      {aiTools.length > 0 && (
-        <nav className="flex flex-col space-y-2">
-          <h3 className="px-4 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-            AI Tools
-          </h3>
-          {aiTools.map((item) => (
-            <NavLink key={item.href} {...item} />
-          ))}
-        </nav>
-      )} */}
-      <div className="mt-auto space-y-2">
-         <a href="/Melody_Gatan_Resume.pdf" target="_blank" rel="noopener noreferrer">
-          <Button variant="outline" className="w-full mb-5">
+
+      <div className="space-y-2 pt-2 border-t border-border">
+        <a href="/Melody_Gatan_Resume.pdf" target="_blank" rel="noopener noreferrer">
+          <Button variant="outline" size="sm" className="w-full">
             <FileText className="mr-2 h-4 w-4" />
             View Resume
           </Button>
         </a>
         <a href="https://github.com/mel418" target="_blank" rel="noopener noreferrer">
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" size="sm" className="w-full">
             <Github className="mr-2 h-4 w-4" />
-            GitHub Profile
+            GitHub
           </Button>
         </a>
       </div>
