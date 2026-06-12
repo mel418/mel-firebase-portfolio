@@ -18,7 +18,7 @@ export default {
     extend: {
       fontFamily: {
         body: ['Inter', 'system-ui', 'sans-serif'],
-        headline: ['Space Grotesk', 'Inter', 'sans-serif'],
+        headline: ['"Sour Gummy"', 'system-ui', 'sans-serif'],
         code: ['ui-monospace', 'monospace'],
       },
       colors: {

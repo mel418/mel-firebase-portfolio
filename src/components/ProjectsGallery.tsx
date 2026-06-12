@@ -119,7 +119,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   const primary = project.links[0];
 
   return (
-    <AnimateIn delay={index * 70} className="h-full shrink-0 basis-[82%] snap-start sm:basis-auto">
+    <AnimateIn delay={index * 70} className="h-full w-[80vw] shrink-0 snap-center sm:w-auto">
       <a
         href={primary.href}
         target="_blank"
@@ -176,7 +176,7 @@ export function ProjectsGallery({ projects }: Props) {
     <div className="space-y-6">
       {featured && <FeaturedProject project={featured} />}
       {/* Mobile: horizontal swipe carousel · sm+: responsive grid */}
-      <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 2xl:grid-cols-3">
+      <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[10vw] pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 2xl:grid-cols-3">
         {rest.map((project, i) => (
           <ProjectCard key={project.title} project={project} index={i} />
         ))}
