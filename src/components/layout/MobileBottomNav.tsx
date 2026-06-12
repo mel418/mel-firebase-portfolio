@@ -8,8 +8,8 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navItems = [
   { href: '/#profile',    label: 'Profile',    icon: User,          id: 'profile' },
-  { href: '/#experience', label: 'Experience', icon: Briefcase,     id: 'experience' },
   { href: '/#projects',   label: 'Projects',   icon: Play,          id: 'projects' },
+  { href: '/#experience', label: 'Experience', icon: Briefcase,     id: 'experience' },
   { href: '/#skills',     label: 'Skills',     icon: Code,          id: 'skills' },
   { href: '/#education',  label: 'Education',  icon: GraduationCap, id: 'education' },
   { href: '/#contact',    label: 'Contact',    icon: Mail,          id: 'contact' },

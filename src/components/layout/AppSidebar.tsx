@@ -17,8 +17,8 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { href: '/#profile',    label: 'Melody Gatan', sublabel: 'Developer',     icon: User,          id: 'profile' },
-  { href: '/#experience', label: 'Experience',   sublabel: 'Playlist',   icon: Briefcase,     id: 'experience' },
   { href: '/#projects',   label: 'Projects',     sublabel: 'Playlist',   icon: Play,          id: 'projects' },
+  { href: '/#experience', label: 'Experience',   sublabel: 'Playlist',   icon: Briefcase,     id: 'experience' },
   { href: '/#skills',     label: 'Skills',       sublabel: 'Collection', icon: Code,          id: 'skills' },
   { href: '/#education',  label: 'Education',    sublabel: 'Playlist',   icon: GraduationCap, id: 'education' },
   { href: '/#contact',    label: 'Contact',      sublabel: 'Playlist',   icon: Mail,          id: 'contact' },
@@ -39,13 +39,19 @@ function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
     <Link
       href={item.href}
       className={cn(
-        'flex items-center gap-3 px-3 py-2 rounded-md transition-colors group',
-        isActive ? 'bg-accent' : 'hover:bg-accent/60'
+        'relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group',
+        isActive ? 'bg-primary/10' : 'hover:bg-accent/60'
       )}
     >
+      {isActive && (
+        <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
+      )}
       {item.id === 'profile' ? (
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
-          <Image src="/PFP2.JPG" alt="Melody Gatan" fill className="object-cover" sizes="40px" />
+        <div className="relative shrink-0">
+          <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-border">
+            <Image src="/PFP2.JPG" alt="Melody Gatan" fill className="object-cover" sizes="40px" />
+          </div>
+          <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card bg-primary" />
         </div>
       ) : (
         <div className={cn(
@@ -69,9 +75,9 @@ export function AppSidebar() {
 
   return (
     <aside className="flex flex-col h-full p-4 space-y-6">
-      <div className="flex items-center gap-2 px-1 pt-2">
-        <Library className="h-7 w-7 text-primary shrink-0" />
-        <span className="text-xl font-bold text-primary font-headline">Your Library</span>
+      <div className="flex items-center gap-2.5 px-2 pt-2">
+        <Library className="h-6 w-6 text-primary shrink-0" />
+        <span className="text-lg font-bold font-headline tracking-tight">Your Library</span>
       </div>
 
       <nav className="flex flex-col space-y-1 flex-1">
@@ -80,15 +86,15 @@ export function AppSidebar() {
         ))}
       </nav>
 
-      <div className="space-y-2 pt-2 border-t border-border">
+      <div className="space-y-2 pt-3 border-t border-border/60">
         <a href="/Melody_Gatan_Resume.pdf" target="_blank" rel="noopener noreferrer">
-          <Button variant="outline" size="sm" className="w-full">
+          <Button size="sm" className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
             <FileText className="mr-2 h-4 w-4" />
             View Resume
           </Button>
         </a>
         <a href="https://github.com/mel418" target="_blank" rel="noopener noreferrer">
-          <Button variant="outline" size="sm" className="w-full">
+          <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
             <Github className="mr-2 h-4 w-4" />
             GitHub
           </Button>

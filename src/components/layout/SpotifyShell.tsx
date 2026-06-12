@@ -15,9 +15,9 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
   const [rightOpen, setRightOpen] = useState(true);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden app-backdrop">
       {/* Left library rail — visible md+ */}
-      <div className="hidden md:flex flex-col w-60 shrink-0 bg-card border-r border-border overflow-y-auto scrollbar-hide">
+      <div className="hidden md:flex flex-col w-60 shrink-0 bg-card/70 backdrop-blur-xl border-r border-border/60 overflow-y-auto scrollbar-hide">
         {leftPanel}
       </div>
 
@@ -29,8 +29,8 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
       {/* Right now-playing panel + toggle (desktop only) */}
       <div
         className={cn(
-          'hidden xl:flex xl:relative shrink-0 bg-card transition-all duration-300 ease-in-out',
-          rightOpen ? 'w-[280px] border-l border-border' : 'w-0'
+          'hidden xl:flex xl:relative shrink-0 bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
+          rightOpen ? 'w-[300px] border-l border-border/60' : 'w-0'
         )}
       >
         {/* Toggle button — sits on the left edge of the panel */}

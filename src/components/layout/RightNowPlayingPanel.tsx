@@ -32,17 +32,21 @@ export function RightNowPlayingPanel({ song }: Props) {
         <div className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">About the artist</p>
 
-          <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden ring-1 ring-border/60">
             <Image
               src="/PFP2.JPG"
               alt="Melody Gatan"
               fill
               className="object-cover object-center"
-              sizes="280px"
+              sizes="300px"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-3 left-3">
-              <p className="text-white font-bold text-lg leading-tight">Melody Gatan</p>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+            <div className="absolute bottom-3 left-3 flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+              </span>
+              <p className="text-white font-bold font-headline text-lg leading-tight tracking-tight">Melody Gatan</p>
             </div>
           </div>
 
@@ -67,17 +71,17 @@ export function RightNowPlayingPanel({ song }: Props) {
         {/* Social links */}
         <div className="flex gap-2 pb-4">
           <a href="https://github.com/mel418" target="_blank" rel="noopener noreferrer" className="flex-1">
-            <Button variant="outline" size="sm" className="w-full hover:border-primary hover:text-primary transition-colors">
+            <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
               <Github className="h-4 w-4" />
             </Button>
           </a>
           <a href="https://linkedin.com/in/melody-gatan" target="_blank" rel="noopener noreferrer" className="flex-1">
-            <Button variant="outline" size="sm" className="w-full hover:border-primary hover:text-primary transition-colors">
+            <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
               <Linkedin className="h-4 w-4" />
             </Button>
           </a>
           <a href="mailto:melodygatan@gmail.com" className="flex-1">
-            <Button variant="outline" size="sm" className="w-full hover:border-primary hover:text-primary transition-colors">
+            <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
               <Mail className="h-4 w-4" />
             </Button>
           </a>

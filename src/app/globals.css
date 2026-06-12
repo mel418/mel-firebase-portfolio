@@ -23,7 +23,7 @@
     --border: 90 20% 85%;
     --input: 90 20% 88%;
     --ring: 100 30% 50%;
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -53,10 +53,30 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
+  html {
     scroll-behavior: smooth;
   }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+  }
+  ::selection {
+    background-color: hsl(var(--primary) / 0.28);
+  }
+  h1, h2, h3 {
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Subtle depth behind the app shell — premium, theme-aware */
+.app-backdrop {
+  background:
+    radial-gradient(60rem 40rem at 110% -10%, hsl(var(--primary) / 0.10), transparent 60%),
+    radial-gradient(50rem 30rem at -10% 0%, hsl(var(--primary) / 0.06), transparent 55%),
+    hsl(var(--background));
 }
 
 @keyframes shimmer-text {

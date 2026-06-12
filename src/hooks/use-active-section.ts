@@ -2,32 +2,49 @@
 
 import { useEffect, useState } from 'react';
 
-const SECTION_IDS = ['profile', 'experience', 'projects', 'skills', 'education', 'contact'];
+// Must be in the same top-to-bottom order the sections appear in the DOM.
+const SECTION_IDS = ['profile', 'projects', 'experience', 'skills', 'education', 'contact'];
 
 export function useActiveSection() {
   const [activeId, setActiveId] = useState<string>('profile');
 
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
+    const sections = SECTION_IDS
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
 
-    SECTION_IDS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
+    // The portfolio scrolls inside the <main> rail, not the window.
+    const scrollEl = sections[0].closest('main');
 
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveId(id);
-          }
-        },
-        { threshold: 0.3, rootMargin: '-20% 0px -60% 0px' }
-      );
+    const computeActive = () => {
+      // Trigger line ~35% down the viewport: the active section is the
+      // last one whose top has scrolled above that line.
+      const line = window.innerHeight * 0.35;
+      let current = sections[0].id;
+      for (const el of sections) {
+        if (el.getBoundingClientRect().top <= line) current = el.id;
+        else break;
+      }
 
-      observer.observe(el);
-      observers.push(observer);
-    });
+      // Bottom guard — a short final section may never reach the line,
+      // so when scrolled to the end, force it active.
+      if (scrollEl && scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight < 4) {
+        current = sections[sections.length - 1].id;
+      }
 
-    return () => observers.forEach((o) => o.disconnect());
+      setActiveId(current);
+    };
+
+    computeActive();
+
+    const target: HTMLElement | Window = scrollEl ?? window;
+    target.addEventListener('scroll', computeActive, { passive: true });
+    window.addEventListener('resize', computeActive);
+    return () => {
+      target.removeEventListener('scroll', computeActive);
+      window.removeEventListener('resize', computeActive);
+    };
   }, []);
 
   return activeId;

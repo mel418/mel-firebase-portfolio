@@ -6,19 +6,27 @@ type SectionProps = {
   title: string;
   icon: LucideIcon;
   children: React.ReactNode;
+  eyebrow?: string;
   hideHeader?: boolean;
 };
 
-export function Section({ id, title, icon: Icon, children, hideHeader = false }: SectionProps) {
+export function Section({ id, title, icon: Icon, children, eyebrow, hideHeader = false }: SectionProps) {
   return (
-    <section id={id} className="scroll-mt-20 px-4 sm:px-6 py-10">
+    <section id={id} className="scroll-mt-24 px-4 sm:px-8 py-12 sm:py-16">
       {!hideHeader && (
         <AnimateIn>
-          <div className="flex items-center gap-3 sm:gap-4 mb-8">
-            <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
-            <h2 className="text-2xl sm:text-4xl font-bold font-headline">{title}</h2>
-            <div className="flex-1 h-px bg-border" />
-          </div>
+          <header className="mb-10">
+            <div className="flex items-center gap-2.5 mb-3">
+              <Icon className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                {eyebrow ?? title}
+              </span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-bold font-headline tracking-tight leading-[1.05]">
+              {title}
+            </h2>
+            <div className="mt-5 h-px w-full bg-gradient-to-r from-border via-border/50 to-transparent" />
+          </header>
         </AnimateIn>
       )}
       {children}

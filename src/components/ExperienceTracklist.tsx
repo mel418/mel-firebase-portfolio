@@ -31,7 +31,7 @@ function ExperienceRow({ entry, index }: { entry: ExperienceEntry; index: number
   return (
     <>
       <TableRow
-        className="group border-b border-border/50 cursor-pointer hover:bg-white/5 transition-colors"
+        className="group border-b border-border/50 cursor-pointer hover:bg-primary/5 transition-colors"
         onClick={() => setOpen((v) => !v)}
       >
         <TableCell className="w-10 text-center">
@@ -89,7 +89,7 @@ export function ExperienceTracklist({ experience }: Props) {
   return (
     <div>
       {/* Desktop table */}
-      <div className="px-4 sm:px-6 hidden md:block">
+      <div className="hidden md:block rounded-2xl border border-border/60 bg-card/40 px-2 sm:px-4">
         <Table>
           <TableHeader>
             <TableRow className="border-b border-border hover:bg-transparent">
@@ -109,7 +109,7 @@ export function ExperienceTracklist({ experience }: Props) {
       </div>
 
       {/* Mobile list fallback */}
-      <div className="md:hidden px-4 space-y-3 mt-2">
+      <div className="md:hidden space-y-3">
         {experience.map((entry, i) => {
           const initials = entry.company.split(' ').slice(0, 2).map((w) => w[0]).join('');
           return (

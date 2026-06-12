@@ -28,7 +28,7 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
         className="block"
       >
         <div className="space-y-3 hover:opacity-90 transition-opacity">
-          <div className="relative w-full aspect-square rounded-xl overflow-hidden shadow-lg bg-muted">
+          <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg ring-1 ring-border/40 bg-muted">
             {song?.albumImageUrl ? (
               <Image
                 src={song.albumImageUrl}
