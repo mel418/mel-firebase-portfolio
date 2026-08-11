@@ -2,27 +2,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { User, Briefcase, Play, Code, GraduationCap, Mail, Github, Library, FileText } from 'lucide-react';
+import { Github, Library, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useActiveSection } from '@/hooks/use-active-section';
+import { navTracks, site, type NavTrack } from '@/content';
+import { navIconRegistry } from '@/lib/icons';
 
-type NavItem = {
-  href: string;
-  label: string;
-  sublabel: string;
-  icon: React.ElementType;
-  id: string;
-};
+type NavItem = NavTrack;
 
-const navItems: NavItem[] = [
-  { href: '/#profile',    label: 'Melody Gatan', sublabel: 'Developer',     icon: User,          id: 'profile' },
-  { href: '/#projects',   label: 'Projects',     sublabel: 'Playlist',   icon: Play,          id: 'projects' },
-  { href: '/#experience', label: 'Experience',   sublabel: 'Playlist',   icon: Briefcase,     id: 'experience' },
-  { href: '/#skills',     label: 'Skills',       sublabel: 'Collection', icon: Code,          id: 'skills' },
-  { href: '/#education',  label: 'Education',    sublabel: 'Playlist',   icon: GraduationCap, id: 'education' },
-  { href: '/#contact',    label: 'Contact',      sublabel: 'Playlist',   icon: Mail,          id: 'contact' },
-];
+const navItems: NavItem[] = navTracks;
 
 function EqualizerBars() {
   return (
@@ -49,7 +38,7 @@ function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
       {item.id === 'profile' ? (
         <div className="relative shrink-0">
           <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-border">
-            <Image src="/PFP2.JPG" alt="Melody Gatan" fill className="object-cover" sizes="40px" />
+            <Image src={site.avatar.src} alt={site.avatar.alt} fill className="object-cover" sizes="40px" />
           </div>
           <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card bg-primary" />
         </div>
@@ -58,7 +47,10 @@ function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
           'h-10 w-10 shrink-0 rounded-md flex items-center justify-center',
           isActive ? 'bg-primary/20' : 'bg-muted'
         )}>
-          <item.icon className={cn('h-5 w-5', isActive ? 'text-primary' : 'text-muted-foreground')} />
+          {(() => {
+            const Icon = navIconRegistry[item.iconName];
+            return <Icon className={cn('h-5 w-5', isActive ? 'text-primary' : 'text-muted-foreground')} />;
+          })()}
         </div>
       )}
       <div className="flex-1 min-w-0">
@@ -87,13 +79,13 @@ export function AppSidebar() {
       </nav>
 
       <div className="space-y-2 pt-3 border-t border-border/60">
-        <a href="/Melody_Gatan_Resume.pdf" target="_blank" rel="noopener noreferrer">
+        <a href={site.resumeHref} target="_blank" rel="noopener noreferrer">
           <Button size="sm" className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
             <FileText className="mr-2 h-4 w-4" />
             View Resume
           </Button>
         </a>
-        <a href="https://github.com/mel418" target="_blank" rel="noopener noreferrer">
+        <a href={site.socials.find((s) => s.type === 'github')!.href} target="_blank" rel="noopener noreferrer">
           <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
             <Github className="mr-2 h-4 w-4" />
             GitHub

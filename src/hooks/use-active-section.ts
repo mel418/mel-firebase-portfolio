@@ -1,15 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { sectionIds } from '@/content';
 
-// Must be in the same top-to-bottom order the sections appear in the DOM.
-const SECTION_IDS = ['profile', 'projects', 'experience', 'skills', 'education', 'contact'];
+// sectionIds (src/content/nav.ts) must be in the same top-to-bottom order
+// the sections appear in the DOM — it's now the single source of truth,
+// previously duplicated here, in AppSidebar, and in MobileBottomNav.
+//
+// NOTE: this scroll-listener implementation is rewritten as a shared
+// IntersectionObserver store in Phase 2 (scroll model switch to document
+// scroll) — this phase only removes the duplicated section-id list.
 
 export function useActiveSection() {
   const [activeId, setActiveId] = useState<string>('profile');
 
   useEffect(() => {
-    const sections = SECTION_IDS
+    const sections = sectionIds
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
     if (sections.length === 0) return;

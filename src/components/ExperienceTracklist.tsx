@@ -7,14 +7,9 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AnimateIn } from '@/components/AnimateIn';
 import { cn } from '@/lib/utils';
+import type { ExperienceEntry } from '@/content';
 
-export type ExperienceEntry = {
-  role: string;
-  company: string;
-  dateRange: string;
-  category: string;
-  bullets: string[];
-};
+export type { ExperienceEntry };
 
 type Props = {
   experience: ExperienceEntry[];
@@ -102,7 +97,7 @@ export function ExperienceTracklist({ experience }: Props) {
           </TableHeader>
           <TableBody>
             {experience.map((entry, i) => (
-              <ExperienceRow key={entry.role + entry.company} entry={entry} index={i} />
+              <ExperienceRow key={entry.slug} entry={entry} index={i} />
             ))}
           </TableBody>
         </Table>
@@ -113,7 +108,7 @@ export function ExperienceTracklist({ experience }: Props) {
         {experience.map((entry, i) => {
           const initials = entry.company.split(' ').slice(0, 2).map((w) => w[0]).join('');
           return (
-            <AnimateIn key={entry.role + entry.company} delay={i * 80}>
+            <AnimateIn key={entry.slug} delay={i * 80}>
               <details className="group rounded-lg border border-border overflow-hidden">
                 <summary className="flex items-center gap-3 p-3 cursor-pointer bg-card hover:bg-accent transition-colors list-none">
                   <Avatar className="h-10 w-10 shrink-0">

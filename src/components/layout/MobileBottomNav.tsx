@@ -1,27 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { User, Briefcase, Play, Code, GraduationCap, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useActiveSection } from '@/hooks/use-active-section';
 import { ThemeToggle } from '@/components/ThemeToggle';
-
-const navItems = [
-  { href: '/#profile',    label: 'Profile',    icon: User,          id: 'profile' },
-  { href: '/#projects',   label: 'Projects',   icon: Play,          id: 'projects' },
-  { href: '/#experience', label: 'Experience', icon: Briefcase,     id: 'experience' },
-  { href: '/#skills',     label: 'Skills',     icon: Code,          id: 'skills' },
-  { href: '/#education',  label: 'Education',  icon: GraduationCap, id: 'education' },
-  { href: '/#contact',    label: 'Contact',    icon: Mail,          id: 'contact' },
-];
+import { navTracks } from '@/content';
+import { navIconRegistry } from '@/lib/icons';
 
 export function MobileBottomNav() {
   const activeId = useActiveSection();
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between bg-card border-t border-border px-2 pb-safe">
-      {navItems.map((item) => {
+      {navTracks.map((item) => {
         const isActive = activeId === item.id;
+        const Icon = navIconRegistry[item.iconName];
         return (
           <Link
             key={item.href}
@@ -31,8 +24,8 @@ export function MobileBottomNav() {
               isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
             )}
           >
-            <item.icon className="h-5 w-5 shrink-0" />
-            <span className="text-[10px] font-medium truncate">{item.label}</span>
+            <Icon className="h-5 w-5 shrink-0" />
+            <span className="text-[10px] font-medium truncate">{item.mobileLabel ?? item.label}</span>
           </Link>
         );
       })}

@@ -7,6 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { NowPlaying, type Song } from '@/components/NowPlaying';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { site, education } from '@/content';
+
+const githubHref = site.socials.find((s) => s.type === 'github')!.href;
+const linkedinHref = site.socials.find((s) => s.type === 'linkedin')!.href;
+const emailHref = site.socials.find((s) => s.type === 'email')!.href;
 
 type Props = {
   song: Song;
@@ -34,8 +39,8 @@ export function RightNowPlayingPanel({ song }: Props) {
 
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden ring-1 ring-border/60">
             <Image
-              src="/PFP2.JPG"
-              alt="Melody Gatan"
+              src={site.avatar.src}
+              alt={site.avatar.alt}
               fill
               className="object-cover object-center"
               sizes="300px"
@@ -46,23 +51,23 @@ export function RightNowPlayingPanel({ song }: Props) {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
-              <p className="text-white font-bold font-headline text-lg leading-tight tracking-tight">Melody Gatan</p>
+              <p className="text-white font-bold font-headline text-lg leading-tight tracking-tight">{site.name}</p>
             </div>
           </div>
 
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Full-stack engineer & CS grad from CSULB. I build production apps by day and drink too much matcha by night. Open to work! 👋
+            {site.bioShort}
           </p>
 
           <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="text-xs border-primary/40 text-primary">CSULB CS &apos;25</Badge>
-            <Badge variant="outline" className="text-xs border-primary/40 text-primary">GPA 3.66</Badge>
-            <Badge variant="outline" className="text-xs">Bellflower, CA</Badge>
-            <Badge variant="outline" className="text-xs">Open to Work</Badge>
+            <Badge variant="outline" className="text-xs border-primary/40 text-primary">{education.shortLabel}</Badge>
+            <Badge variant="outline" className="text-xs border-primary/40 text-primary">GPA {education.gpa}</Badge>
+            <Badge variant="outline" className="text-xs">{site.location}</Badge>
+            <Badge variant="outline" className="text-xs">{site.status}</Badge>
           </div>
 
           <div className="flex flex-wrap gap-1.5">
-            <span className="text-xs text-muted-foreground">WiC · ACM · SWE</span>
+            <span className="text-xs text-muted-foreground">{education.affiliations.map((a) => a.split(' — ')[0]).join(' · ')}</span>
           </div>
         </div>
 
@@ -70,17 +75,17 @@ export function RightNowPlayingPanel({ song }: Props) {
 
         {/* Social links */}
         <div className="flex gap-2 pb-4">
-          <a href="https://github.com/mel418" target="_blank" rel="noopener noreferrer" className="flex-1">
+          <a href={githubHref} target="_blank" rel="noopener noreferrer" className="flex-1">
             <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
               <Github className="h-4 w-4" />
             </Button>
           </a>
-          <a href="https://linkedin.com/in/melody-gatan" target="_blank" rel="noopener noreferrer" className="flex-1">
+          <a href={linkedinHref} target="_blank" rel="noopener noreferrer" className="flex-1">
             <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
               <Linkedin className="h-4 w-4" />
             </Button>
           </a>
-          <a href="mailto:melodygatan@gmail.com" className="flex-1">
+          <a href={emailHref} className="flex-1">
             <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
               <Mail className="h-4 w-4" />
             </Button>
