@@ -14,6 +14,9 @@
 # testing
 /coverage
 
+# v2 redesign QA screenshot matrix (qa-screenshots.mjs) — transient, regenerated per phase
+/.qa/
+
 # next.js
 /.next/
 /out/
