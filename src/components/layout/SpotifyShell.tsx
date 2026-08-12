@@ -15,22 +15,31 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
   const [rightOpen, setRightOpen] = useState(true);
 
   return (
-    <div className="flex h-screen overflow-hidden app-backdrop">
-      {/* Left library rail — visible md+ */}
-      <div className="hidden md:flex flex-col w-60 shrink-0 bg-card/70 backdrop-blur-xl border-r border-border/60 overflow-y-auto scrollbar-hide">
+    <div className="flex min-h-dvh">
+      {/* Decorative backdrop — viewport-pinned rather than a background on
+          the flex wrapper, since the wrapper now grows to full document
+          height (document scroll, not a fixed h-screen shell) and a
+          radial-gradient positioned in element-relative percentages would
+          otherwise scale against that full height instead of the
+          viewport. */}
+      <div className="app-backdrop fixed inset-0 -z-10" aria-hidden="true" />
+
+      {/* Left library rail — visible md+, pinned via sticky rather than
+          relying on a viewport-height ancestor with overflow-hidden. */}
+      <div className="hidden md:flex flex-col w-rail shrink-0 sticky top-0 h-dvh bg-card/70 backdrop-blur-xl border-r border-border/60 overflow-y-auto scrollbar-hide">
         {leftPanel}
       </div>
 
-      {/* Main scrollable content */}
-      <main className="flex-1 overflow-y-auto scrollbar-hide">
+      {/* Main content — scrolls with the document now, not internally. */}
+      <main className="flex-1 min-w-0">
         {children}
       </main>
 
       {/* Right now-playing panel + toggle (desktop only) */}
       <div
         className={cn(
-          'hidden xl:flex xl:relative shrink-0 bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
-          rightOpen ? 'w-[300px] border-l border-border/60' : 'w-0'
+          'hidden xl:flex xl:relative shrink-0 sticky top-0 h-dvh bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
+          rightOpen ? 'w-panel border-l border-border/60' : 'w-0'
         )}
       >
         {/* Toggle button — sits on the left edge of the panel */}

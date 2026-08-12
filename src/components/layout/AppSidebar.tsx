@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Github, Library, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useActiveSection } from '@/hooks/use-active-section';
+import { useActiveSection, setActiveSectionImmediate } from '@/hooks/use-active-section';
 import { navTracks, site, type NavTrack } from '@/content';
 import { navIconRegistry } from '@/lib/icons';
 
@@ -27,6 +27,7 @@ function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
   return (
     <Link
       href={item.href}
+      onClick={() => setActiveSectionImmediate(item.id)}
       className={cn(
         'relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group',
         isActive ? 'bg-primary/10' : 'hover:bg-accent/60'

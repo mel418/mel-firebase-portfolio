@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { useActiveSection } from '@/hooks/use-active-section';
+import { useActiveSection, setActiveSectionImmediate } from '@/hooks/use-active-section';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { navTracks } from '@/content';
 import { navIconRegistry } from '@/lib/icons';
@@ -19,6 +19,7 @@ export function MobileBottomNav() {
           <Link
             key={item.href}
             href={item.href}
+            onClick={() => setActiveSectionImmediate(item.id)}
             className={cn(
               'flex flex-col items-center gap-0.5 px-2 py-3 min-w-0 transition-colors',
               isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'

@@ -1,57 +1,99 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { sectionIds } from '@/content';
 
-// sectionIds (src/content/nav.ts) must be in the same top-to-bottom order
-// the sections appear in the DOM — it's now the single source of truth,
-// previously duplicated here, in AppSidebar, and in MobileBottomNav.
+// Module-level store: one shared IntersectionObserver + one active-id
+// value, no matter how many components subscribe (AppSidebar,
+// MobileBottomNav, and — from Phase 4 — the context panel). Previously
+// this hook ran its own independent scroll listener per instance.
 //
-// NOTE: this scroll-listener implementation is rewritten as a shared
-// IntersectionObserver store in Phase 2 (scroll model switch to document
-// scroll) — this phase only removes the duplicated section-id list.
+// Rewritten for document scroll (Phase 2d) — the shell no longer traps
+// scrolling inside <main>, so this observes against the real viewport
+// (`root: null`, via rootMargin) instead of `main.closest('main')`.
+
+type Listener = () => void;
+
+let activeId: string = sectionIds[0];
+const listeners = new Set<Listener>();
+let observer: IntersectionObserver | null = null;
+let suppressUntil = 0;
+
+function notify() {
+  listeners.forEach((l) => l());
+}
+
+function setActive(id: string) {
+  if (id !== activeId) {
+    activeId = id;
+    notify();
+  }
+}
+
+function checkBottomGuard() {
+  if (Date.now() < suppressUntil) return;
+  const atBottom =
+    window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  if (atBottom) setActive(sectionIds[sectionIds.length - 1]);
+}
+
+function ensureObserver() {
+  if (observer || typeof window === 'undefined') return;
+
+  const sections = sectionIds
+    .map((id) => document.getElementById(id))
+    .filter((el): el is HTMLElement => el !== null);
+  if (sections.length === 0) return;
+
+  // Thin detection band ~35-40% down the viewport — a section becomes
+  // "active" as soon as any part of it crosses that line.
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (Date.now() < suppressUntil) return;
+      for (const entry of entries) {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      }
+    },
+    { rootMargin: '-35% 0px -60% 0px', threshold: 0 }
+  );
+
+  sections.forEach((el) => observer!.observe(el));
+
+  // A short final section may never cross the band, so it'd never
+  // become active on its own — force it active once actually at the
+  // bottom of the document.
+  window.addEventListener('scroll', checkBottomGuard, { passive: true });
+}
+
+function subscribe(listener: Listener) {
+  ensureObserver();
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function getSnapshot() {
+  return activeId;
+}
+
+function getServerSnapshot() {
+  return sectionIds[0];
+}
+
+/**
+ * Call on nav-item click so the active indicator jumps immediately
+ * instead of flickering through every intermediate section during the
+ * smooth scroll to the target. Suppresses observer updates briefly —
+ * long enough to cover a same-page smooth scroll, short enough that a
+ * genuine subsequent scroll (e.g. the user immediately scrolls away)
+ * isn't ignored for long.
+ */
+export function setActiveSectionImmediate(id: string) {
+  suppressUntil = Date.now() + 700;
+  setActive(id);
+}
 
 export function useActiveSection() {
-  const [activeId, setActiveId] = useState<string>('profile');
-
-  useEffect(() => {
-    const sections = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-    if (sections.length === 0) return;
-
-    // The portfolio scrolls inside the <main> rail, not the window.
-    const scrollEl = sections[0].closest('main');
-
-    const computeActive = () => {
-      // Trigger line ~35% down the viewport: the active section is the
-      // last one whose top has scrolled above that line.
-      const line = window.innerHeight * 0.35;
-      let current = sections[0].id;
-      for (const el of sections) {
-        if (el.getBoundingClientRect().top <= line) current = el.id;
-        else break;
-      }
-
-      // Bottom guard — a short final section may never reach the line,
-      // so when scrolled to the end, force it active.
-      if (scrollEl && scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight < 4) {
-        current = sections[sections.length - 1].id;
-      }
-
-      setActiveId(current);
-    };
-
-    computeActive();
-
-    const target: HTMLElement | Window = scrollEl ?? window;
-    target.addEventListener('scroll', computeActive, { passive: true });
-    window.addEventListener('resize', computeActive);
-    return () => {
-      target.removeEventListener('scroll', computeActive);
-      window.removeEventListener('resize', computeActive);
-    };
-  }, []);
-
-  return activeId;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
