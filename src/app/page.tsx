@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Github, Linkedin, Mail, MapPin, GraduationCap, Code, Briefcase, Send, Award, Users, Database, Wrench, Layers, type LucideIcon } from 'lucide-react';
 
 import { AppSidebar } from '@/components/layout/AppSidebar';
@@ -17,6 +16,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { NowPlaying, type Song } from '@/components/NowPlaying';
 import { getNowPlaying } from '@/lib/spotify';
 import { site, projects, experience, skills, education, getSkill, type SkillCategory } from '@/content';
+import { HeroRecord } from '@/components/hero/HeroRecord';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { TrackNumber } from '@/components/primitives/TrackNumber';
 
 // ── Legacy projects adapter ────────────────────────────────────────────────
 // ProjectsGallery.tsx (Phase 5 rebuilds this as the real Discography
@@ -76,29 +78,15 @@ export default async function Home() {
         {/* ── PROFILE HERO ── */}
         <section id="profile" className="scroll-mt-24">
           <div className="relative px-4 sm:px-8 pt-16 sm:pt-20 pb-12 playlist-header-gradient">
-            <AnimateIn direction="up">
+            <AnimateIn direction="up" className="space-y-7">
+              <Eyebrow live className="tracking-[0.28em]">Now Playing</Eyebrow>
+
               <div className="flex flex-col sm:flex-row items-start sm:items-end gap-7">
-                {/* Profile photo — square album-art style */}
-                <div className="relative w-36 h-36 sm:w-48 sm:h-48 shrink-0 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-primary/20">
-                  <div className="absolute inset-0 bg-primary/10 blur-xl" />
-                  <Image
-                    src={site.heroArtwork.src}
-                    alt={site.heroArtwork.alt}
-                    fill
-                    className="relative z-10 object-cover"
-                    sizes="(max-width: 640px) 144px, 192px"
-                    priority
-                  />
-                </div>
+                <HeroRecord artwork={site.heroArtwork} />
 
                 {/* Name / tagline / meta */}
                 <div className="space-y-4 pb-1">
-                  <div className="flex items-center gap-2.5">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-                      {site.status} · {site.title}
-                    </p>
-                  </div>
+                  <Eyebrow className="tracking-[0.28em]">{site.status} · {site.title}</Eyebrow>
                   <h1 className="text-5xl sm:text-7xl font-bold font-headline tracking-tight leading-[0.95]">
                     {site.name}
                   </h1>
@@ -116,8 +104,9 @@ export default async function Home() {
           </div>
 
           {/* Bio + social + NowPlaying (visible below xl where right panel is hidden) */}
-          <div className="px-4 sm:px-8 py-8 space-y-6 border-b border-border/60">
+          <div className="px-4 sm:px-8 py-8 space-y-5 border-b border-border/60">
             <AnimateIn delay={100} direction="up">
+              <TrackNumber n={1} label="INTRO" className="mb-3" />
               <p className="text-base sm:text-lg leading-relaxed text-foreground/80 max-w-2xl">
                 {site.bio}
               </p>

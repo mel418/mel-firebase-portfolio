@@ -6,8 +6,20 @@
    used by the hero's radial progress ring (Phase 3). */
 @property --ring-progress {
   syntax: '<number>';
-  inherits: false;
+  /* true so the reduced-motion :root override (below) can reach the ring
+     element when its own animation is disabled — with false, the ring
+     would just fall back to initial-value (0, invisible) instead. */
+  inherits: true;
   initial-value: 0;
+}
+
+@keyframes ring-sweep {
+  from { --ring-progress: 0; }
+  to { --ring-progress: 100; }
+}
+
+.animate-ring-sweep {
+  animation: ring-sweep 16s linear infinite;
 }
 
 @layer base {
@@ -142,6 +154,10 @@
     --dur-fast: 1ms;
     --dur-base: 1ms;
     --dur-slow: 1ms;
+    /* Frozen at a fixed sweep position instead of the animation's 0%
+       start, so the hero's radial ring still reads as a ring rather
+       than vanishing when ambient motion is off. */
+    --ring-progress: 65;
   }
   [data-reveal] {
     transform: none !important;

@@ -106,6 +106,10 @@ export default {
           '0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--primary) / 0)' },
           '50%': { boxShadow: '0 0 32px 12px hsl(var(--primary) / 0.18)' },
         },
+        'spin-slow': {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -113,6 +117,7 @@ export default {
         'float': 'float 5s ease-in-out infinite',
         'float-slow': 'float-slow 7s ease-in-out 1.5s infinite',
         'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+        'spin-slow': 'spin-slow 14s linear infinite',
       },
       typography: ({ theme }: { theme: (path: string) => any }) => ({
         DEFAULT: {

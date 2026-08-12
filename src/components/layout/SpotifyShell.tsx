@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Grain } from '@/components/primitives/Grain';
 
 type Props = {
   leftPanel: ReactNode;
@@ -23,6 +24,7 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           otherwise scale against that full height instead of the
           viewport. */}
       <div className="app-backdrop fixed inset-0 -z-10" aria-hidden="true" />
+      <Grain />
 
       {/* Left library rail — visible md+, pinned via sticky rather than
           relying on a viewport-height ancestor with overflow-hidden. */}
