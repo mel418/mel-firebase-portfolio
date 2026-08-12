@@ -1,12 +1,8 @@
-'use client';
-
-import { useState } from 'react';
 import { Play, ChevronDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AnimateIn } from '@/components/AnimateIn';
-import { cn } from '@/lib/utils';
+import { TrackNumber } from '@/components/primitives/TrackNumber';
 import type { ExperienceEntry } from '@/content';
 
 export type { ExperienceEntry };
@@ -15,8 +11,20 @@ type Props = {
   experience: ExperienceEntry[];
 };
 
+/**
+ * One responsive <details>-based tracklist instead of a desktop <table>
+ * plus a separate mobile list. The old table version's row was a plain
+ * `<TableRow onClick>` with no role/tabIndex/aria-expanded — genuinely
+ * keyboard-inaccessible. <details>/<summary> is natively keyboard-
+ * operable (Enter/Space), works with JS disabled, and needs no ARIA
+ * bookkeeping — the browser owns all of that for free.
+ *
+ * Trade-off accepted deliberately: native <details> snaps open/closed
+ * instantly rather than animating height (animating it would mean
+ * either a Chromium-only CSS feature or re-adding JS, which would give
+ * back the "works with no JS" property this rewrite is for).
+ */
 function ExperienceRow({ entry, index }: { entry: ExperienceEntry; index: number }) {
-  const [open, setOpen] = useState(false);
   const initials = entry.company
     .split(' ')
     .slice(0, 2)
@@ -24,116 +32,59 @@ function ExperienceRow({ entry, index }: { entry: ExperienceEntry; index: number
     .join('');
 
   return (
-    <>
-      <TableRow
-        className="group border-b border-border/50 cursor-pointer hover:bg-primary/5 transition-colors"
-        onClick={() => setOpen((v) => !v)}
-      >
-        <TableCell className="w-10 text-center">
-          <span className="text-muted-foreground group-hover:hidden">{index + 1}</span>
-          <Play className="h-4 w-4 text-primary fill-primary hidden group-hover:block mx-auto" />
-        </TableCell>
-        <TableCell>
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 shrink-0">
-              <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            <div className="min-w-0">
-              <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">
-                {entry.role}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">{entry.company}</p>
-            </div>
-          </div>
-        </TableCell>
-        <TableCell className="hidden sm:table-cell text-xs text-muted-foreground whitespace-nowrap">
+    <details className="group border-b border-border/50 last:border-b-0">
+      <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3 transition-colors hover:bg-primary/5 sm:px-2">
+        <span className="w-6 shrink-0 text-center">
+          <TrackNumber n={index + 1} className="group-hover:hidden" />
+          <Play className="mx-auto hidden h-4 w-4 fill-primary text-primary group-hover:block" />
+        </span>
+
+        <Avatar className="h-10 w-10 shrink-0">
+          <AvatarFallback className="bg-primary/20 text-xs font-bold text-primary">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
+
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium transition-colors group-hover:text-primary">
+            {entry.role}
+          </p>
+          <p className="truncate text-xs text-muted-foreground">
+            {entry.company}
+            <span className="sm:hidden"> · {entry.dateRange}</span>
+          </p>
+        </div>
+
+        <span className="hidden shrink-0 whitespace-nowrap text-xs text-muted-foreground sm:block">
           {entry.dateRange}
-        </TableCell>
-        <TableCell className="hidden md:table-cell">
-          <Badge variant="secondary" className="text-xs">{entry.category}</Badge>
-        </TableCell>
-        <TableCell className="w-8">
-          <ChevronDown
-            className={cn(
-              'h-4 w-4 text-muted-foreground transition-transform duration-200',
-              open && 'rotate-180'
-            )}
-          />
-        </TableCell>
-      </TableRow>
-      {open && (
-        <tr>
-          <td colSpan={5} className="pb-4 pt-1 bg-muted/20">
-            <ul className="pl-16 pr-4 space-y-1.5 border-l-2 border-primary/30 ml-4">
-              {entry.bullets.map((bullet, i) => (
-                <li key={i} className="text-sm text-muted-foreground">
-                  {bullet}
-                </li>
-              ))}
-            </ul>
-          </td>
-        </tr>
-      )}
-    </>
+        </span>
+        <Badge variant="secondary" className="hidden shrink-0 text-xs md:inline-flex">
+          {entry.category}
+        </Badge>
+        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
+      </summary>
+
+      <div className="bg-muted/20 py-3 pl-[3.75rem] pr-4 sm:pl-14">
+        <ul className="ml-4 space-y-1.5 border-l-2 border-primary/30 pl-4">
+          {entry.bullets.map((bullet, i) => (
+            <li key={i} className="text-sm text-muted-foreground">
+              {bullet}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </details>
   );
 }
 
 export function ExperienceTracklist({ experience }: Props) {
   return (
-    <div>
-      {/* Desktop table */}
-      <div className="hidden md:block rounded-2xl border border-border/60 bg-card/40 px-2 sm:px-4">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b border-border hover:bg-transparent">
-              <TableHead className="w-10 text-muted-foreground">#</TableHead>
-              <TableHead className="text-muted-foreground">Role</TableHead>
-              <TableHead className="text-muted-foreground hidden sm:table-cell">Period</TableHead>
-              <TableHead className="text-muted-foreground hidden md:table-cell">Type</TableHead>
-              <TableHead className="w-8" />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {experience.map((entry, i) => (
-              <ExperienceRow key={entry.slug} entry={entry} index={i} />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Mobile list fallback */}
-      <div className="md:hidden space-y-3">
-        {experience.map((entry, i) => {
-          const initials = entry.company.split(' ').slice(0, 2).map((w) => w[0]).join('');
-          return (
-            <AnimateIn key={entry.slug} delay={i * 80}>
-              <details className="group rounded-lg border border-border overflow-hidden">
-                <summary className="flex items-center gap-3 p-3 cursor-pointer bg-card hover:bg-accent transition-colors list-none">
-                  <Avatar className="h-10 w-10 shrink-0">
-                    <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{entry.role}</p>
-                    <p className="text-xs text-muted-foreground truncate">{entry.company} · {entry.dateRange}</p>
-                  </div>
-                  <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
-                </summary>
-                <div className="px-4 py-3 bg-muted/30">
-                  <ul className="space-y-1.5 border-l-2 border-primary/30 pl-4">
-                    {entry.bullets.map((bullet, j) => (
-                      <li key={j} className="text-xs text-muted-foreground">{bullet}</li>
-                    ))}
-                  </ul>
-                </div>
-              </details>
-            </AnimateIn>
-          );
-        })}
-      </div>
+    <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/40">
+      {experience.map((entry, i) => (
+        <AnimateIn key={entry.slug} delay={i * 60}>
+          <ExperienceRow entry={entry} index={i} />
+        </AnimateIn>
+      ))}
     </div>
   );
 }
