@@ -105,7 +105,7 @@ function NavList() {
 
 export function AppSidebar() {
   return (
-    <aside className="flex flex-col h-full p-4 space-y-6">
+    <aside aria-label="Library" className="flex flex-col h-full p-4 space-y-6">
       <div className="flex items-center gap-2.5 px-2 pt-2">
         <Library className="h-6 w-6 text-primary shrink-0" />
         <span className="text-lg font-bold font-headline tracking-tight">Your Library</span>
@@ -114,18 +114,22 @@ export function AppSidebar() {
       <NavList />
 
       <div className="space-y-2 pt-3 border-t border-border/60">
-        <a href={site.resumeHref} target="_blank" rel="noopener noreferrer">
-          <Button size="sm" className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+        {/* asChild renders a single <a> carrying the Button's styles,
+            instead of nesting a <button> inside an <a> — invalid HTML
+            (interactive content can't nest) that also creates two
+            overlapping tab-stops for one control. */}
+        <Button asChild size="sm" className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+          <a href={site.resumeHref} target="_blank" rel="noopener noreferrer">
             <FileText className="mr-2 h-4 w-4" />
             View Resume
-          </Button>
-        </a>
-        <a href={site.socials.find((s) => s.type === 'github')!.href} target="_blank" rel="noopener noreferrer">
-          <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
+          </a>
+        </Button>
+        <Button asChild variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
+          <a href={site.socials.find((s) => s.type === 'github')!.href} target="_blank" rel="noopener noreferrer">
             <Github className="mr-2 h-4 w-4" />
             GitHub
-          </Button>
-        </a>
+          </a>
+        </Button>
       </div>
     </aside>
   );

@@ -3,6 +3,7 @@ import { Inter, Bricolage_Grotesque } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { SkipLink } from '@/components/layout/SkipLink';
 import { site } from '@/content';
 import { cn } from '@/lib/utils';
 
@@ -45,6 +46,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="font-body antialiased">
+        <SkipLink />
         <ThemeProvider defaultTheme="system" storageKey="portfolio-theme">
           {children}
           <Toaster />

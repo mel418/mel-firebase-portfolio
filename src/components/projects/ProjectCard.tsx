@@ -54,9 +54,15 @@ export function ProjectCard({ project, isOpen, onToggle, variant = 'grid' }: Pro
             priority={isFeatured}
           />
         ) : (
+          /* Text sits on --foreground/--muted-foreground, not the tint —
+             those are the tokens already verified against AA in both
+             themes (Phase 2c). The per-project tint stays only as a
+             15%-opacity background wash, where WCAG's text-contrast
+             rules don't apply the same way — several tint colors were
+             found to fail AA as text, as low as 2.4:1 in dark mode. */
           <div className="flex h-full w-full flex-col justify-between bg-album-tint/15 p-5">
-            <TrackNumber n={project.trackNumber} className="text-sm text-album-tint" />
-            <p className="font-headline text-3xl font-bold leading-[0.95] tracking-tight text-album-tint sm:text-4xl">
+            <TrackNumber n={project.trackNumber} className="text-sm text-muted-foreground" />
+            <p className="font-headline text-3xl font-bold leading-[0.95] tracking-tight text-foreground sm:text-4xl">
               {project.title}
             </p>
           </div>

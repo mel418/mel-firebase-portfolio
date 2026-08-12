@@ -1,13 +1,6 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     // Both deploy configs (firebase.json frameworksBackend, apphosting.yaml)
     // run this as a real Node/Cloud Run server, so the built-in optimizer

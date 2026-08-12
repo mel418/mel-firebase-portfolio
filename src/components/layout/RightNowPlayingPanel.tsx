@@ -21,7 +21,7 @@ type Props = {
 
 export function RightNowPlayingPanel({ song }: Props) {
   return (
-    <aside className="flex flex-col h-full">
+    <aside aria-label="Now playing context" className="flex flex-col h-full">
       {/* Sticky header — stays put while panel body scrolls */}
       <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm flex items-center justify-between px-4 pt-4 pb-3 border-b border-border/40 shrink-0">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Now Playing — Spotify</p>
@@ -85,21 +85,21 @@ export function RightNowPlayingPanel({ song }: Props) {
 
         {/* Social links */}
         <div className="flex gap-2 pb-4">
-          <a href={githubHref} target="_blank" rel="noopener noreferrer" className="flex-1">
-            <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
+          <Button asChild variant="outline" size="sm" className="flex-1 rounded-full hover:border-primary hover:text-primary transition-colors">
+            <a href={githubHref} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
               <Github className="h-4 w-4" />
-            </Button>
-          </a>
-          <a href={linkedinHref} target="_blank" rel="noopener noreferrer" className="flex-1">
-            <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="flex-1 rounded-full hover:border-primary hover:text-primary transition-colors">
+            <a href={linkedinHref} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
               <Linkedin className="h-4 w-4" />
-            </Button>
-          </a>
-          <a href={emailHref} className="flex-1">
-            <Button variant="outline" size="sm" className="w-full rounded-full hover:border-primary hover:text-primary transition-colors">
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="flex-1 rounded-full hover:border-primary hover:text-primary transition-colors">
+            <a href={emailHref} aria-label="Email">
               <Mail className="h-4 w-4" />
-            </Button>
-          </a>
+            </a>
+          </Button>
         </div>
       </div>
     </aside>

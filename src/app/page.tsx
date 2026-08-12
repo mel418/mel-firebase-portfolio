@@ -115,27 +115,27 @@ export default async function Home({ searchParams }: PageProps) {
             <AnimateIn delay={150} direction="up">
               <div className="flex flex-wrap items-center gap-2.5">
                 <MagneticWrap strength={0.2}>
-                  <a href={site.resumeHref} target="_blank" rel="noopener noreferrer">
-                    <Button size="sm" className="rounded-full px-5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                  <Button asChild size="sm" className="rounded-full px-5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                    <a href={site.resumeHref} target="_blank" rel="noopener noreferrer">
                       <Send className="mr-2 h-4 w-4" /> View Resume
-                    </Button>
-                  </a>
+                    </a>
+                  </Button>
                 </MagneticWrap>
-                <a href={githubHref} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
+                <Button asChild variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
+                  <a href={githubHref} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                     <Github />
-                  </Button>
-                </a>
-                <a href={linkedinHref} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
+                  </a>
+                </Button>
+                <Button asChild variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
+                  <a href={linkedinHref} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                     <Linkedin />
-                  </Button>
-                </a>
-                <a href={emailHref}>
-                  <Button variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
+                  </a>
+                </Button>
+                <Button asChild variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
+                  <a href={emailHref} aria-label="Email">
                     <Mail />
-                  </Button>
-                </a>
+                  </a>
+                </Button>
               </div>
             </AnimateIn>
             {/* Now Playing shown only when right panel is hidden */}

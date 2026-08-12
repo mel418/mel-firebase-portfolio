@@ -56,9 +56,11 @@ export function ProjectDetail({ project, onClose }: Props) {
               />
             </div>
           ) : (
+            /* Text on --foreground/--muted-foreground, tint reserved for
+               the background wash only — see ProjectCard.tsx for why. */
             <div className="flex aspect-[16/10] flex-col justify-between rounded-xl bg-album-tint/15 p-6">
-              <TrackNumber n={project.trackNumber} className="text-sm text-album-tint" />
-              <p className="font-headline text-4xl font-bold leading-[0.95] tracking-tight text-album-tint sm:text-5xl">
+              <TrackNumber n={project.trackNumber} className="text-sm text-muted-foreground" />
+              <p className="font-headline text-4xl font-bold leading-[0.95] tracking-tight text-foreground sm:text-5xl">
                 {project.title}
               </p>
             </div>
@@ -76,16 +78,18 @@ export function ProjectDetail({ project, onClose }: Props) {
               const Icon = meta.icon;
               const primary = i === 0;
               return (
-                <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
-                  <Button
-                    size="sm"
-                    variant={primary ? 'default' : 'outline'}
-                    className={primary ? 'rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold' : 'rounded-full hover:border-primary hover:text-primary transition-colors'}
-                  >
+                <Button
+                  key={link.href}
+                  asChild
+                  size="sm"
+                  variant={primary ? 'default' : 'outline'}
+                  className={primary ? 'rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold' : 'rounded-full hover:border-primary hover:text-primary transition-colors'}
+                >
+                  <a href={link.href} target="_blank" rel="noopener noreferrer">
                     <Icon className="mr-1.5 h-4 w-4" />
                     {meta.label}
-                  </Button>
-                </a>
+                  </a>
+                </Button>
               );
             })}
           </div>

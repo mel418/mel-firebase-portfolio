@@ -35,8 +35,11 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
         {leftPanel}
       </div>
 
-      {/* Main content — scrolls with the document now, not internally. */}
-      <main className="flex-1 min-w-0">
+      {/* Main content — scrolls with the document now, not internally.
+          id + tabIndex are the SkipLink's target: tabIndex={-1} lets the
+          browser move keyboard focus here on jump, without adding <main>
+          to the normal tab order. */}
+      <main id="main-content" tabIndex={-1} className="flex-1 min-w-0 focus:outline-none">
         {children}
       </main>
 
