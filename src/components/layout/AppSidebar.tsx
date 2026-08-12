@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 import { Github, Library, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -28,14 +29,16 @@ function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
     <Link
       href={item.href}
       onClick={() => setActiveSectionImmediate(item.id)}
+      aria-current={isActive ? 'true' : undefined}
       className={cn(
-        'relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group',
+        'relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group',
         isActive ? 'bg-primary/10' : 'hover:bg-accent/60'
       )}
     >
-      {isActive && (
-        <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
-      )}
+      <span className="font-code w-4 shrink-0 text-[10px] text-muted-foreground [font-variant-numeric:tabular-nums]">
+        {item.trackNumber}
+      </span>
+
       {item.id === 'profile' ? (
         <div className="relative shrink-0">
           <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-border">
@@ -63,9 +66,44 @@ function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
   );
 }
 
-export function AppSidebar() {
+function NavList() {
   const activeId = useActiveSection();
+  const containerRef = useRef<HTMLElement>(null);
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [indicator, setIndicator] = useState<{ top: number; height: number } | null>(null);
 
+  useEffect(() => {
+    const row = rowRefs.current[activeId];
+    const container = containerRef.current;
+    if (!row || !container) return;
+    // Measured once per active-section change (not per frame) — the
+    // actual slide is a compositor-friendly `top` transition below, this
+    // just computes where it should land.
+    setIndicator({
+      top: row.offsetTop,
+      height: row.offsetHeight,
+    });
+  }, [activeId]);
+
+  return (
+    <nav ref={containerRef} className="relative flex flex-col space-y-1 flex-1">
+      {indicator && (
+        <span
+          aria-hidden="true"
+          className="absolute left-0 w-1 rounded-r-full bg-primary transition-[top,height] duration-base ease-track motion-ambient"
+          style={{ top: indicator.top, height: indicator.height }}
+        />
+      )}
+      {navItems.map((item) => (
+        <div key={item.href} ref={(el) => { rowRefs.current[item.id] = el; }}>
+          <NavItemRow item={item} isActive={activeId === item.id} />
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+export function AppSidebar() {
   return (
     <aside className="flex flex-col h-full p-4 space-y-6">
       <div className="flex items-center gap-2.5 px-2 pt-2">
@@ -73,11 +111,7 @@ export function AppSidebar() {
         <span className="text-lg font-bold font-headline tracking-tight">Your Library</span>
       </div>
 
-      <nav className="flex flex-col space-y-1 flex-1">
-        {navItems.map((item) => (
-          <NavItemRow key={item.href} item={item} isActive={activeId === item.id} />
-        ))}
-      </nav>
+      <NavList />
 
       <div className="space-y-2 pt-3 border-t border-border/60">
         <a href={site.resumeHref} target="_blank" rel="noopener noreferrer">

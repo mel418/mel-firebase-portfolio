@@ -8,6 +8,8 @@ import { Separator } from '@/components/ui/separator';
 import { NowPlaying, type Song } from '@/components/NowPlaying';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { site, education } from '@/content';
+import { NowViewing } from '@/components/layout/NowViewing';
+import { ErrorBoundary } from '@/components/primitives/ErrorBoundary';
 
 const githubHref = site.socials.find((s) => s.type === 'github')!.href;
 const linkedinHref = site.socials.find((s) => s.type === 'linkedin')!.href;
@@ -22,12 +24,20 @@ export function RightNowPlayingPanel({ song }: Props) {
     <aside className="flex flex-col h-full">
       {/* Sticky header — stays put while panel body scrolls */}
       <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm flex items-center justify-between px-4 pt-4 pb-3 border-b border-border/40 shrink-0">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Now Playing</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Now Playing — Spotify</p>
         <ThemeToggle />
       </div>
 
       {/* Scrollable body */}
       <div className="p-4 space-y-6">
+        {/* Section-context companion — isolated so a bug here can never
+            take down the real Spotify widget below it. */}
+        <ErrorBoundary>
+          <NowViewing />
+        </ErrorBoundary>
+
+        <Separator />
+
         {/* Expanded Now Playing widget */}
         <NowPlaying song={song} variant="expanded" />
 
