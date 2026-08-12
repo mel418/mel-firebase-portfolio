@@ -99,6 +99,16 @@ export function Discography({ projects, initialTrack }: Props) {
 
   const featured = projects.find((p) => p.featured);
   const rest = projects.filter((p) => p !== featured);
+  const openGridProject = rest.find((p) => p.slug === openSlug);
+
+  // Expandable never unmounts its content — that's what makes the
+  // collapse a real animation instead of the content just vanishing.
+  // So this has to keep rendering the *last* open project through the
+  // close transition, not go blank the instant openGridProject clears.
+  const [lastOpenGridProject, setLastOpenGridProject] = useState<Project | undefined>(openGridProject);
+  useEffect(() => {
+    if (openGridProject) setLastOpenGridProject(openGridProject);
+  }, [openGridProject]);
 
   return (
     <div className="space-y-6">
@@ -111,20 +121,28 @@ export function Discography({ projects, initialTrack }: Props) {
         </AnimateIn>
       )}
 
+      {/*
+        Cards live in their own grid with nothing else interleaved. An
+        earlier version rendered each card's (collapsed) detail panel as
+        a `col-span-full` sibling right next to it — but CSS grid
+        auto-placement forces a full-width item onto its own row *and*
+        pushes the next item to a fresh row too, regardless of that
+        row's actual height. With one of those after every card, the
+        grid silently collapsed to one column at every breakpoint. The
+        detail for whichever card is open now renders once, below the
+        whole grid, instead of interleaved per-card.
+      */}
       <div className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
         {rest.map((project, i) => (
-          <div key={project.slug} className="contents">
-            <AnimateIn delay={i * 60}>
-              <ProjectCard project={project} isOpen={openSlug === project.slug} onToggle={toggle} />
-            </AnimateIn>
-            <Expandable isOpen={openSlug === project.slug} className="col-span-full">
-              <div className="pt-4">
-                <ProjectDetail project={project} onClose={close} />
-              </div>
-            </Expandable>
-          </div>
+          <AnimateIn key={project.slug} delay={i * 60}>
+            <ProjectCard project={project} isOpen={openSlug === project.slug} onToggle={toggle} />
+          </AnimateIn>
         ))}
       </div>
+
+      <Expandable isOpen={!!openGridProject}>
+        {lastOpenGridProject && <ProjectDetail project={lastOpenGridProject} onClose={close} />}
+      </Expandable>
     </div>
   );
 }

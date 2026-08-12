@@ -53,11 +53,6 @@ export function HeroRecord({ artwork }: Props) {
         />
       </div>
 
-      {/* Spindle hole — a rotationally-symmetric dot reads as static even
-          though it's technically part of the rotating rim's stacking; a
-          filled circle looks identical at every angle. */}
-      <span className="absolute left-1/2 top-1/2 z-10 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background ring-1 ring-border" />
-
       <MagneticWrap strength={0.35} className="absolute -bottom-1 -right-1 z-20">
         <button
           type="button"

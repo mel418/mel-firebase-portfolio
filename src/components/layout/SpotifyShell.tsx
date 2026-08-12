@@ -53,7 +53,7 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           `relative` was redundant even before it became actively harmful. */}
       <div
         className={cn(
-          'hidden xl:flex shrink-0 sticky top-0 h-dvh bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
+          'hidden xl:flex shrink-0 self-start sticky top-0 bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
           rightOpen ? 'w-panel border-l border-border/60' : 'w-0'
         )}
       >
@@ -76,13 +76,16 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           </button>
         </MagneticWrap>
 
-        {/* Panel content — hidden when collapsed */}
-        <div
-          className={cn(
-            'flex flex-col h-full overflow-y-auto scrollbar-hide w-full',
-            !rightOpen && 'invisible pointer-events-none'
-          )}
-        >
+        {/* Panel content — no independent scroll zone anymore. It used to
+            be clipped to h-dvh with its own overflow-y-auto, which read
+            as an awkward second scrollbar nested inside the page's main
+            scroll. Now the panel is unconstrained (self-start so it
+            doesn't stretch to match <main>'s height) and just sticky —
+            its top stays pinned to the viewport for as long as there's
+            page left to scroll, and only in the last stretch of the
+            page does it un-stick and scroll normally to reveal whatever
+            didn't fit above the fold. One scroll gesture, not two. */}
+        <div className={cn('flex flex-col w-full', !rightOpen && 'invisible pointer-events-none')}>
           {rightPanel}
         </div>
       </div>
