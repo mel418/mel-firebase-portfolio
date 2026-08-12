@@ -202,6 +202,22 @@
   background: linear-gradient(180deg, hsl(var(--forest-700) / 0.85) 0%, transparent 100%);
 }
 
+/* Subtle scroll-driven parallax on the hero record — Chromium-only
+   today (animation-timeline: view()), invisible/inert elsewhere via
+   @supports rather than a JS fallback. Purely decorative, so silent
+   degradation is the correct behavior, not a bug to patch around. */
+@supports (animation-timeline: view()) {
+  .parallax-hero {
+    animation: hero-parallax linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 60%;
+  }
+}
+@keyframes hero-parallax {
+  from { transform: translateY(0); }
+  to { transform: translateY(-28px); }
+}
+
 .animate-shimmer-text {
   background: linear-gradient(
     90deg,

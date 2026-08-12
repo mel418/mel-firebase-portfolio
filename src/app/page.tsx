@@ -19,6 +19,7 @@ import { site, projects, experience, education, getProject } from '@/content';
 import { HeroRecord } from '@/components/hero/HeroRecord';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { TrackNumber } from '@/components/primitives/TrackNumber';
+import { MagneticWrap } from '@/components/primitives/MagneticWrap';
 
 const githubHref = site.socials.find((s) => s.type === 'github')!.href;
 const linkedinHref = site.socials.find((s) => s.type === 'linkedin')!.href;
@@ -113,11 +114,13 @@ export default async function Home({ searchParams }: PageProps) {
             </AnimateIn>
             <AnimateIn delay={150} direction="up">
               <div className="flex flex-wrap items-center gap-2.5">
-                <a href={site.resumeHref} target="_blank" rel="noopener noreferrer">
-                  <Button size="sm" className="rounded-full px-5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-                    <Send className="mr-2 h-4 w-4" /> View Resume
-                  </Button>
-                </a>
+                <MagneticWrap strength={0.2}>
+                  <a href={site.resumeHref} target="_blank" rel="noopener noreferrer">
+                    <Button size="sm" className="rounded-full px-5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                      <Send className="mr-2 h-4 w-4" /> View Resume
+                    </Button>
+                  </a>
+                </MagneticWrap>
                 <a href={githubHref} target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
                     <Github />

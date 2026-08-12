@@ -5,6 +5,8 @@ import type { ReactNode } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Grain } from '@/components/primitives/Grain';
+import { CustomCursor } from '@/components/primitives/CustomCursor';
+import { MagneticWrap } from '@/components/primitives/MagneticWrap';
 
 type Props = {
   leftPanel: ReactNode;
@@ -25,6 +27,7 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           viewport. */}
       <div className="app-backdrop fixed inset-0 -z-10" aria-hidden="true" />
       <Grain />
+      <CustomCursor />
 
       {/* Left library rail — visible md+, pinned via sticky rather than
           relying on a viewport-height ancestor with overflow-hidden. */}
@@ -45,21 +48,23 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
         )}
       >
         {/* Toggle button — sits on the left edge of the panel */}
-        <button
-          onClick={() => setRightOpen((v) => !v)}
-          className={cn(
-            'absolute -left-6 top-12 z-20 flex h-7 w-7 items-center justify-center rounded-full border shadow-md transition-colors',
-            rightOpen
-              ? 'bg-card border-border hover:bg-accent'
-              : 'bg-primary border-primary text-primary-foreground hover:bg-primary/90 shadow-lg'
-          )}
-          aria-label={rightOpen ? 'Collapse panel' : 'Expand panel'}
-        >
-          {rightOpen
-            ? <ChevronRight className="h-3.5 w-3.5" />
-            : <ChevronLeft className="h-3.5 w-3.5" />
-          }
-        </button>
+        <MagneticWrap strength={0.3} className="absolute -left-6 top-12 z-20">
+          <button
+            onClick={() => setRightOpen((v) => !v)}
+            className={cn(
+              'flex h-7 w-7 items-center justify-center rounded-full border shadow-md transition-colors',
+              rightOpen
+                ? 'bg-card border-border hover:bg-accent'
+                : 'bg-primary border-primary text-primary-foreground hover:bg-primary/90 shadow-lg'
+            )}
+            aria-label={rightOpen ? 'Collapse panel' : 'Expand panel'}
+          >
+            {rightOpen
+              ? <ChevronRight className="h-3.5 w-3.5" />
+              : <ChevronLeft className="h-3.5 w-3.5" />
+            }
+          </button>
+        </MagneticWrap>
 
         {/* Panel content — hidden when collapsed */}
         <div

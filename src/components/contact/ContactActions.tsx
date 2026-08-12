@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { MagneticWrap } from '@/components/primitives/MagneticWrap';
 
 export function CopyEmailButton({ email }: { email: string }) {
   const [copied, setCopied] = useState(false);
@@ -21,15 +22,17 @@ export function CopyEmailButton({ email }: { email: string }) {
   }
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      onClick={handleCopy}
-      className="rounded-full hover:border-primary hover:text-primary transition-colors"
-    >
-      {copied ? <Check className="mr-1.5 h-4 w-4" /> : <Copy className="mr-1.5 h-4 w-4" />}
-      {copied ? 'Copied' : 'Copy email'}
-    </Button>
+    <MagneticWrap strength={0.25}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={handleCopy}
+        className="rounded-full hover:border-primary hover:text-primary transition-colors"
+      >
+        {copied ? <Check className="mr-1.5 h-4 w-4" /> : <Copy className="mr-1.5 h-4 w-4" />}
+        {copied ? 'Copied' : 'Copy email'}
+      </Button>
+    </MagneticWrap>
   );
 }
