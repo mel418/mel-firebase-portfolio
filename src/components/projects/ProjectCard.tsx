@@ -10,29 +10,30 @@ import { getSkill, type Project } from '@/content';
 type Props = {
   project: Project;
   isOpen: boolean;
-  onToggle: (slug: string) => void;
+  onOpen: (slug: string) => void;
   variant?: 'featured' | 'grid';
 };
 
 /**
- * Closed-state discography card — a disclosure trigger, not a link. The
- * whole card expands the album-detail view in place (ProjectDetail);
- * the actual Live/Code links live inside that expanded view. Text-forward
- * variant (no `project.artwork`) covers CECS-327, which has no
- * screenshot or README to draw one from — an oversized track-number +
- * title composition on the project's tint color instead of a
- * placeholder image.
+ * Closed-state discography card — opens the album-detail view in a
+ * dialog (ProjectDetail, via Discography's shared Dialog). `isOpen`
+ * still drives a highlight/persistent-play-icon style so the card
+ * behind the dialog reads as "this one's open", even though the actual
+ * disclosure semantics moved to the dialog itself. Text-forward variant
+ * (no `project.artwork`) covers CECS-327, which has no screenshot or
+ * README to draw one from — an oversized track-number + title
+ * composition on the project's tint color instead of a placeholder
+ * image.
  */
-export function ProjectCard({ project, isOpen, onToggle, variant = 'grid' }: Props) {
+export function ProjectCard({ project, isOpen, onOpen, variant = 'grid' }: Props) {
   const isFeatured = variant === 'featured';
 
   return (
     <button
       type="button"
       id={`card-${project.slug}`}
-      aria-expanded={isOpen}
-      aria-controls={`detail-${project.slug}`}
-      onClick={() => onToggle(project.slug)}
+      aria-haspopup="dialog"
+      onClick={() => onOpen(project.slug)}
       className={cn(
         'group relative flex w-full flex-col overflow-hidden rounded-2xl border text-left transition-all duration-300',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',

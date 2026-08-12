@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { Github, ExternalLink, Trophy, X } from 'lucide-react';
+import { Github, ExternalLink, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { DialogTitle } from '@/components/ui/dialog';
 import { TrackNumber } from '@/components/primitives/TrackNumber';
 import { StackList } from '@/components/projects/StackList';
 import { LinerNotes } from '@/components/projects/LinerNotes';
@@ -17,31 +18,21 @@ const LINK_META: Record<ProjectLink['type'], { label: string; icon: typeof Githu
 
 type Props = {
   project: Project;
-  onClose: () => void;
 };
 
-export function ProjectDetail({ project, onClose }: Props) {
+/**
+ * Renders as the content of Discography's shared Dialog — no wrapper
+ * border/background of its own (DialogContent already provides that)
+ * and no close button (Radix's DialogContent renders one). DialogTitle
+ * wraps the visible project title via asChild, so it doubles as the
+ * dialog's accessible name without changing how it looks.
+ */
+export function ProjectDetail({ project }: Props) {
   const notes = getLinerNotes(project.slug);
 
   return (
-    <div
-      id={`detail-${project.slug}`}
-      role="region"
-      aria-label={`${project.title} details`}
-      className="rounded-2xl border border-primary/30 bg-card/60 p-6 sm:p-9"
-      style={{ ['--album-tint' as string]: project.tint }}
-    >
-      <div className="flex items-start justify-between gap-4">
-        <TrackNumber n={project.trackNumber} label={project.role} />
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={`Close ${project.title} details`}
-          className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      </div>
+    <div style={{ ['--album-tint' as string]: project.tint }}>
+      <TrackNumber n={project.trackNumber} label={project.role} className="pr-8" />
 
       <div className="mt-5 grid gap-8 lg:grid-cols-[1.1fr_1fr]">
         <div className="space-y-5">
@@ -66,7 +57,9 @@ export function ProjectDetail({ project, onClose }: Props) {
             </div>
           )}
 
-          <h3 className="font-headline text-2xl font-bold tracking-tight sm:text-3xl">{project.title}</h3>
+          <DialogTitle asChild>
+            <h3 className="font-headline text-2xl font-bold tracking-tight sm:text-3xl">{project.title}</h3>
+          </DialogTitle>
           <p className="text-base font-medium text-foreground/90">{project.tagline}</p>
           <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">{project.description}</p>
 
