@@ -43,10 +43,17 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
         {children}
       </main>
 
-      {/* Right now-playing panel + toggle (desktop only) */}
+      {/* Right now-playing panel + toggle (desktop only). Was `xl:relative`
+          here too, left over from before this had `sticky` at all — Tailwind's
+          responsive variant wins the cascade over the base `sticky` class,
+          so the computed position was actually "relative", not "sticky",
+          and the panel silently scrolled away with the page instead of
+          staying pinned. `sticky` already establishes its own containing
+          block for the absolutely-positioned toggle button below, so
+          `relative` was redundant even before it became actively harmful. */}
       <div
         className={cn(
-          'hidden xl:flex xl:relative shrink-0 sticky top-0 h-dvh bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
+          'hidden xl:flex shrink-0 sticky top-0 h-dvh bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
           rightOpen ? 'w-panel border-l border-border/60' : 'w-0'
         )}
       >
