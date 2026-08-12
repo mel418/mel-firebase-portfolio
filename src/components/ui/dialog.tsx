@@ -31,8 +31,11 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 // Wider and taller than shadcn's default (max-w-lg) — the project detail
 // view carries artwork, description, stack, links, and full liner notes,
-// not a small form. Content itself scrolls internally (max-h-[85dvh]
-// overflow-y-auto) rather than the whole page.
+// not a small form. Content still scrolls internally on shorter screens
+// (max-h-[92dvh] overflow-y-auto) rather than the whole page, but
+// scrollbar-hide keeps that invisible — same convention already used
+// for the library rail and context panel — rather than showing a
+// native scrollbar track.
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
@@ -42,7 +45,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-3xl max-h-[85dvh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border bg-card p-6 shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:p-9",
+        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-5xl max-h-[92dvh] overflow-y-auto scrollbar-hide translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border bg-card p-6 shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:p-9",
         className
       )}
       {...props}
