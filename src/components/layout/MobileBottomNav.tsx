@@ -11,7 +11,10 @@ export function MobileBottomNav() {
   const activeId = useActiveSection();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between bg-card border-t border-border px-2 pb-safe">
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center bg-card border-t border-border px-1"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
       {navTracks.map((item) => {
         const isActive = activeId === item.id;
         const Icon = navIconRegistry[item.iconName];
@@ -21,7 +24,7 @@ export function MobileBottomNav() {
             href={item.href}
             onClick={() => setActiveSectionImmediate(item.id)}
             className={cn(
-              'flex flex-col items-center gap-0.5 px-2 py-3 min-w-0 transition-colors',
+              'flex flex-1 flex-col items-center gap-0.5 px-1 py-3 min-w-0 transition-colors',
               isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
             )}
           >
@@ -30,7 +33,7 @@ export function MobileBottomNav() {
           </Link>
         );
       })}
-      <div className="px-2 py-3">
+      <div className="flex flex-1 items-center justify-center py-3">
         <ThemeToggle />
       </div>
     </nav>

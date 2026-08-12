@@ -205,12 +205,18 @@
 /* Subtle scroll-driven parallax on the hero record — Chromium-only
    today (animation-timeline: view()), invisible/inert elsewhere via
    @supports rather than a JS fallback. Purely decorative, so silent
-   degradation is the correct behavior, not a bug to patch around. */
-@supports (animation-timeline: view()) {
-  .parallax-hero {
-    animation: hero-parallax linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 60%;
+   degradation is the correct behavior, not a bug to patch around.
+   Scoped to md+ — skipped on mobile entirely rather than just made
+   smaller, per the redesign plan's explicit mobile guidance to reduce
+   parallax (scroll perf/battery matter more there, and the record
+   renders smaller anyway so the effect reads as less deliberate). */
+@media (min-width: 768px) {
+  @supports (animation-timeline: view()) {
+    .parallax-hero {
+      animation: hero-parallax linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 60%;
+    }
   }
 }
 @keyframes hero-parallax {
