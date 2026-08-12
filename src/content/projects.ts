@@ -113,7 +113,7 @@ export const projects: Project[] = [
     year: 'Dec 2025',
     role: 'Machine Learning Engineer · Solo',
     artwork: {
-      src: '/animals10.png',
+      src: '/animals10.webp',
       alt: 'Animals10 CNN classifier',
       width: 1169,
       height: 593,
@@ -165,7 +165,7 @@ export const projects: Project[] = [
     year: 'Jul 2026',
     role: 'Product Lead & Developer · Solo',
     artwork: {
-      src: '/Modo Matcha menu.png',
+      src: '/Modo Matcha menu.webp',
       alt: 'Modo Matcha live ordering system',
       width: 1919,
       height: 912,

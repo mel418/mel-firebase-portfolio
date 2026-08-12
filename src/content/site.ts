@@ -17,18 +17,18 @@ export const site: SiteIdentity = {
   email: 'melodygatan@gmail.com',
   resumeHref: '/Melody_Gatan_Resume.pdf',
   avatar: {
-    src: '/PFP2.JPG',
+    src: '/PFP2.webp',
     alt: 'Melody Gatan',
-    width: 912,
-    height: 912,
-    tint: '100 30% 50%',
+    width: 600,
+    height: 600,
+    tint: '142 34% 18%', // matches --forest-700 (globals.css)
   },
   heroArtwork: {
-    src: '/lofiPFP.png',
+    src: '/lofiPFP.webp',
     alt: 'Melody Gatan',
-    width: 1024,
-    height: 576,
-    tint: '100 30% 50%',
+    width: 900,
+    height: 506,
+    tint: '142 34% 18%',
   },
   socials: [
     { type: 'github', label: 'GitHub', href: 'https://github.com/mel418' },

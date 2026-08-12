@@ -9,21 +9,11 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true, // Add this line
+    // Both deploy configs (firebase.json frameworksBackend, apphosting.yaml)
+    // run this as a real Node/Cloud Run server, so the built-in optimizer
+    // (backed by `sharp`, now a dependency) works there the same as in dev.
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
-        port: '',
-        pathname: '/**',
-      },
-       {
         protocol: 'https',
         hostname: 'skillicons.dev',
         port: '',
