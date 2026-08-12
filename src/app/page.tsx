@@ -12,8 +12,7 @@ import { ReleaseCard } from '@/components/education/ReleaseCard';
 import { Section } from '@/components/Section';
 import { AnimateIn } from '@/components/AnimateIn';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { SideB } from '@/components/contact/SideB';
 import { NowPlaying, type Song } from '@/components/NowPlaying';
 import { getNowPlaying } from '@/lib/spotify';
 import { site, projects, experience, education, getProject } from '@/content';
@@ -171,45 +170,9 @@ export default async function Home({ searchParams }: PageProps) {
         </Section>
 
         {/* ── CONTACT ── */}
-        <Section id="contact" icon={Mail} title="Let's Connect" eyebrow="Contact">
+        <Section id="contact" icon={Mail} title="Let's Make Something" eyebrow="Side B">
           <AnimateIn>
-            <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] items-start">
-              <div className="space-y-5">
-                <p className="text-base sm:text-lg leading-relaxed text-foreground/80 max-w-md">
-                  Have a question or want to build something together? My inbox is always open — I&apos;ll get back to you as soon as I can.
-                </p>
-                <div className="flex flex-wrap gap-2.5">
-                  <a href={githubHref} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
-                      <Github />
-                    </Button>
-                  </a>
-                  <a href={linkedinHref} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
-                      <Linkedin />
-                    </Button>
-                  </a>
-                  <a href={emailHref}>
-                    <Button variant="outline" size="icon" className="rounded-full hover:border-primary hover:text-primary transition-colors">
-                      <Mail />
-                    </Button>
-                  </a>
-                </div>
-              </div>
-              <div className="rounded-2xl border border-border/70 bg-card/40 p-6 sm:p-8">
-                {/* NOTE: mailto: form submission is unsupported in modern
-                    browsers — messages sent through this are silently lost.
-                    Deleted and replaced in Phase 8 (SIDE B). */}
-                <form action={emailHref} method="post" encType="text/plain" className="space-y-4">
-                  <Input type="text" name="name" placeholder="Your Name" required />
-                  <Input type="email" name="email" placeholder="Your Email" required />
-                  <Textarea name="message" placeholder="Your Message" rows={5} required />
-                  <Button type="submit" className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-                    <Send className="mr-2 h-4 w-4" /> Send Message
-                  </Button>
-                </form>
-              </div>
-            </div>
+            <SideB />
           </AnimateIn>
         </Section>
 
