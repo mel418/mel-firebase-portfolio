@@ -1,10 +1,11 @@
+import type { Metadata } from 'next';
 import { Github, Linkedin, Mail, MapPin, GraduationCap, Code, Briefcase, Send, Award, Users, Database, Wrench, Layers, type LucideIcon } from 'lucide-react';
 
 import { AppSidebar } from '@/components/layout/AppSidebar';
 import { SpotifyShell } from '@/components/layout/SpotifyShell';
 import { RightNowPlayingPanel } from '@/components/layout/RightNowPlayingPanel';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
-import { ProjectsGallery, type Project as LegacyProject } from '@/components/ProjectsGallery';
+import { Discography } from '@/components/projects/Discography';
 import { ExperienceTracklist } from '@/components/ExperienceTracklist';
 import { Section } from '@/components/Section';
 import { AnimateIn } from '@/components/AnimateIn';
@@ -15,31 +16,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { NowPlaying, type Song } from '@/components/NowPlaying';
 import { getNowPlaying } from '@/lib/spotify';
-import { site, projects, experience, skills, education, getSkill, type SkillCategory } from '@/content';
+import { site, projects, experience, skills, education, getProject, type SkillCategory } from '@/content';
 import { HeroRecord } from '@/components/hero/HeroRecord';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { TrackNumber } from '@/components/primitives/TrackNumber';
-
-// ── Legacy projects adapter ────────────────────────────────────────────────
-// ProjectsGallery.tsx (Phase 5 rebuilds this as the real Discography
-// component) requires every card to have `imageUrl: string`. CECS-327 has
-// no artwork and no README to draw one from — it renders via Phase 5's
-// text-forward card variant instead, so it's excluded from this legacy
-// grid until then. Tags are capped at 4 (matching the grid cards' existing
-// slice) so the now-richer stack data (e.g. PennySprout gained Supabase)
-// doesn't blow out the featured project's uncapped badge row.
-const legacyProjects: LegacyProject[] = projects
-  .filter((p) => p.artwork)
-  .map((p) => ({
-    title: p.title,
-    tagline: p.tagline,
-    description: p.description,
-    imageUrl: p.artwork!.src,
-    tags: p.stack.slice(0, 4).map((id) => getSkill(id)?.name ?? id),
-    links: p.links,
-    accolade: p.accolade,
-    featured: p.featured,
-  }));
 
 // ── Skills grid grouping ───────────────────────────────────────────────────
 // Content (src/content/skills.ts) is pure data — category labels/icons for
@@ -58,7 +38,41 @@ const githubHref = site.socials.find((s) => s.type === 'github')!.href;
 const linkedinHref = site.socials.find((s) => s.type === 'linkedin')!.href;
 const emailHref = site.socials.find((s) => s.type === 'email')!.href;
 
-export default async function Home() {
+type PageProps = {
+  searchParams: Promise<{ track?: string }>;
+};
+
+// A shared ?track=<slug> link (or a search-engine crawl) renders the
+// project's own title/description/OG image server-side, already
+// expanded — no client-side reveal needed for it to work as a share card.
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const { track } = await searchParams;
+  const project = track ? getProject(track) : undefined;
+
+  if (!project) {
+    return {
+      title: `${site.name} - ${site.title}`,
+      description: `Portfolio of ${site.name}, a ${site.title.toLowerCase()} and full-stack developer.`,
+    };
+  }
+
+  const title = `${project.title} — ${site.name}`;
+  return {
+    title,
+    description: project.tagline,
+    openGraph: {
+      title,
+      description: project.tagline,
+      images: project.artwork
+        ? [{ url: project.artwork.src, width: project.artwork.width, height: project.artwork.height, alt: project.artwork.alt }]
+        : undefined,
+    },
+  };
+}
+
+export default async function Home({ searchParams }: PageProps) {
+  const { track } = await searchParams;
+
   let song: Song = { isPlaying: false };
   try {
     song = await getNowPlaying();
@@ -146,10 +160,10 @@ export default async function Home() {
         <Section id="projects" icon={Code} title="Projects" eyebrow="Selected Work">
           <AnimateIn>
             <p className="-mt-4 mb-8 max-w-2xl text-sm sm:text-base leading-relaxed text-muted-foreground">
-              Things I&apos;ve built end-to-end — from AI-powered products to a CNN trained from scratch. Tap any card to dive into the code or a live demo.
+              Things I&apos;ve built end-to-end — from AI-powered products to a CNN trained from scratch. Tap any card to open the liner notes, or jump straight to the code or a live demo.
             </p>
           </AnimateIn>
-          <ProjectsGallery projects={legacyProjects} />
+          <Discography projects={projects} initialTrack={track} />
         </Section>
 
         {/* ── EXPERIENCE ── */}

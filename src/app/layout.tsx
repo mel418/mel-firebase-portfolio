@@ -10,6 +10,11 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'sw
 const headlineFont = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-headline', display: 'swap' });
 
 export const metadata: Metadata = {
+  // Required for per-project OG images (page.tsx's generateMetadata) to
+  // resolve as absolute URLs instead of relative paths that social
+  // crawlers can't follow. Override via NEXT_PUBLIC_SITE_URL if the
+  // deploy target changes from the current Firebase Hosting URL.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://portfolio-q2zw3.web.app'),
   title: `${site.name} - ${site.title}`,
   description: `Portfolio of ${site.name}, a ${site.title.toLowerCase()} and full-stack developer.`,
 };
