@@ -64,8 +64,14 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           rightOpen ? 'w-panel border-l border-border/60' : 'w-0'
         )}
       >
-        {/* Toggle button — sits on the left edge of the panel */}
-        <MagneticWrap strength={0.3} className="absolute -left-6 top-12 z-20">
+        {/* Toggle button — sits on the left edge of the panel. -left-6 is
+            tuned for the open (300px) panel, straddling the boundary with
+            main. When collapsed, the panel's own left edge sits flush
+            against the viewport's right edge (0 width), so that same -24px
+            offset let the button's other 28px of width poke 4px past the
+            viewport — the source of a real horizontal scrollbar. -left-8
+            pulls it fully back inside when closed. */}
+        <MagneticWrap strength={0.3} className={cn('absolute top-12 z-20', rightOpen ? '-left-6' : '-left-8')}>
           <button
             onClick={() => setRightOpen((v) => !v)}
             className={cn(
