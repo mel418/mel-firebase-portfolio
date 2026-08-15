@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { SiSpotify } from '@icons-pack/react-simple-icons';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -11,12 +12,43 @@ export type Song = {
   album?: string;
   albumImageUrl?: string;
   songUrl?: string;
+  progressMs?: number;
+  durationMs?: number;
 };
 
 type Props = {
   song: Song;
   variant?: 'compact' | 'expanded';
 };
+
+/**
+ * Progress is a snapshot from the server render, not a live poll — so
+ * rather than freeze at that snapshot (or worse, fake it, which is what
+ * this replaced: a hardcoded 42%-full bar shown even while "Not playing"),
+ * this animates from the real snapshot to 100% over the real remaining
+ * time via a single CSS transition. No interval, no re-render per second.
+ */
+function LiveProgressBar({ progressMs, durationMs }: { progressMs: number; durationMs: number }) {
+  const initialPct = Math.min(100, (progressMs / durationMs) * 100);
+  const [pct, setPct] = useState(initialPct);
+  const remainingMs = Math.max(0, durationMs - progressMs);
+
+  useEffect(() => {
+    if (remainingMs <= 0) return;
+    const raf = requestAnimationFrame(() => setPct(100));
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progressMs, durationMs]);
+
+  return (
+    <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
+      <div
+        className="h-full rounded-full bg-primary"
+        style={{ width: `${pct}%`, transitionProperty: 'width', transitionTimingFunction: 'linear', transitionDuration: `${remainingMs}ms` }}
+      />
+    </div>
+  );
+}
 
 export function NowPlaying({ song, variant = 'compact' }: Props) {
   if (variant === 'expanded') {
@@ -67,10 +99,9 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
             </p>
           </div>
 
-          {/* Decorative static progress bar */}
-          <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
-            <div className="h-full w-[42%] rounded-full bg-primary" />
-          </div>
+          {song?.isPlaying && song.progressMs !== undefined && song.durationMs !== undefined && (
+            <LiveProgressBar progressMs={song.progressMs} durationMs={song.durationMs} />
+          )}
         </div>
       </a>
     );

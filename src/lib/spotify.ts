@@ -40,8 +40,10 @@ async function getAccessToken(): Promise<string> {
 
 interface NowPlayingResponse {
   is_playing: boolean;
+  progress_ms: number | null;
   item?: {
     name: string;
+    duration_ms: number;
     artists: { name: string }[];
     album: {
       name: string;
@@ -79,6 +81,8 @@ export async function getNowPlaying() {
   const album = song.item.album.name;
   const albumImageUrl = song.item.album.images[0]?.url;
   const songUrl = song.item.external_urls.spotify;
+  const progressMs = song.progress_ms ?? undefined;
+  const durationMs = song.item.duration_ms;
 
   return {
     isPlaying,
@@ -87,5 +91,7 @@ export async function getNowPlaying() {
     album,
     albumImageUrl,
     songUrl,
+    progressMs,
+    durationMs,
   };
 }

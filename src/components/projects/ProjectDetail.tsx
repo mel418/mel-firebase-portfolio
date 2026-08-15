@@ -32,7 +32,7 @@ export function ProjectDetail({ project }: Props) {
 
   return (
     <div style={{ ['--album-tint' as string]: project.tint }}>
-      <TrackNumber n={project.trackNumber} label={project.role} className="pr-8" />
+      <TrackNumber n={project.year} label={project.role} className="pr-8" />
 
       <div className="mt-5 grid gap-8 lg:grid-cols-[1.1fr_1fr]">
         <div className="space-y-5">
@@ -50,7 +50,7 @@ export function ProjectDetail({ project }: Props) {
             /* Text on --foreground/--muted-foreground, tint reserved for
                the background wash only — see ProjectCard.tsx for why. */
             <div className="flex aspect-[16/10] flex-col justify-between rounded-xl bg-album-tint/15 p-6">
-              <TrackNumber n={project.trackNumber} className="text-sm text-muted-foreground" />
+              <TrackNumber n={project.year} className="text-sm text-muted-foreground" />
               <p className="font-headline text-4xl font-bold leading-[0.95] tracking-tight text-foreground sm:text-5xl">
                 {project.title}
               </p>

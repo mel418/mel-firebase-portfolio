@@ -62,7 +62,7 @@ export function ProjectCard({ project, isOpen, onOpen, variant = 'grid' }: Props
              rules don't apply the same way — several tint colors were
              found to fail AA as text, as low as 2.4:1 in dark mode. */
           <div className="flex h-full w-full flex-col justify-between bg-album-tint/15 p-5">
-            <TrackNumber n={project.trackNumber} className="text-sm text-muted-foreground" />
+            <TrackNumber n={project.year} className="text-sm text-muted-foreground" />
             <p className="font-headline text-3xl font-bold leading-[0.95] tracking-tight text-foreground sm:text-4xl">
               {project.title}
             </p>
@@ -90,7 +90,7 @@ export function ProjectCard({ project, isOpen, onOpen, variant = 'grid' }: Props
       {/* Content */}
       <div className={cn('flex flex-1 flex-col gap-2.5', isFeatured ? 'justify-center p-6 sm:p-9' : 'p-5')}>
         <div className="flex items-start justify-between gap-2">
-          <TrackNumber n={project.trackNumber} className={isFeatured ? 'text-sm' : ''} />
+          <TrackNumber n={project.year} className={isFeatured ? 'text-sm' : ''} />
           {!isFeatured && <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />}
         </div>
         <h3 className={cn('font-headline font-bold leading-tight tracking-tight transition-colors group-hover:text-primary', isFeatured ? 'text-2xl sm:text-4xl' : 'text-lg')}>
