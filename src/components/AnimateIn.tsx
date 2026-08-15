@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useReveal } from '@/lib/motion/useReveal';
 
 type Props = {
   children: React.ReactNode;
@@ -11,28 +12,11 @@ type Props = {
 };
 
 export function AnimateIn({ children, className, delay = 0, direction = 'up' }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const { ref, isVisible } = useReveal<HTMLDivElement>();
+  // Applies the hidden state only after mount, so if JS fails to load
+  // entirely, content is never stuck invisible — it's plain visible HTML.
   const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.08 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  useEffect(() => setHasMounted(true), []);
 
   const directionClasses = {
     up: 'translate-y-6 opacity-0',
@@ -44,6 +28,7 @@ export function AnimateIn({ children, className, delay = 0, direction = 'up' }: 
   return (
     <div
       ref={ref}
+      data-reveal
       className={cn(
         'transition-all duration-700 ease-out',
         hasMounted && !isVisible ? directionClasses : 'translate-y-0 translate-x-0 opacity-100',

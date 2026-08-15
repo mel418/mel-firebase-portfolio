@@ -22,47 +22,42 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState)
 
+function resolveTheme(theme: Theme): 'light' | 'dark' {
+  if (theme === 'system') {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  }
+  return theme
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
   storageKey = 'portfolio-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>(defaultTheme)
-  const [mounted, setMounted] = React.useState(false)
+  // Lazy-initialized from localStorage so this matches whatever the
+  // blocking <head> script (see layout.tsx) already applied to <html>
+  // before hydration. The previous version started from `defaultTheme`
+  // and only read localStorage in a later effect — that second read
+  // triggered a second class swap right after mount, trading the
+  // pre-paint flash for a hydration-time one.
+  const [theme, setThemeState] = React.useState<Theme>(() => {
+    if (typeof window === 'undefined') return defaultTheme
+    return (localStorage.getItem(storageKey) as Theme | null) ?? defaultTheme
+  })
 
   React.useEffect(() => {
-    setMounted(true)
-    const storedTheme = localStorage.getItem(storageKey) as Theme | null
-    if (storedTheme) {
-      setTheme(storedTheme)
-    }
-  }, [storageKey])
-
-  React.useEffect(() => {
-    if (!mounted) return
-
     const root = window.document.documentElement
-
+    const resolved = resolveTheme(theme)
     root.classList.remove('light', 'dark')
-
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light'
-
-      root.classList.add(systemTheme)
-      return
-    }
-
-    root.classList.add(theme)
-  }, [theme, mounted])
+    root.classList.add(resolved)
+  }, [theme])
 
   const value = {
     theme,
     setTheme: (theme: Theme) => {
       localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+      setThemeState(theme)
     },
   }
 

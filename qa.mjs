@@ -4,7 +4,7 @@
  */
 import { chromium } from 'playwright';
 
-const BASE = 'http://localhost:3003';
+const BASE = 'http://localhost:9002'; // matches the `dev` script in package.json
 const SLOW = 600; // ms between actions so you can watch
 
 async function sleep(ms) {

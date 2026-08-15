@@ -2,50 +2,115 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Registered so the browser can animate it smoothly on the compositor —
+   used by the hero's radial progress ring (Phase 3). */
+@property --ring-progress {
+  syntax: '<number>';
+  /* true so the reduced-motion :root override (below) can reach the ring
+     element when its own animation is disabled — with false, the ring
+     would just fall back to initial-value (0, invisible) instead. */
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes ring-sweep {
+  from { --ring-progress: 0; }
+  to { --ring-progress: 100; }
+}
+
+.animate-ring-sweep {
+  animation: ring-sweep 16s linear infinite;
+}
+
 @layer base {
   :root {
-    --background: 85 20% 95%;
-    --foreground: 90 10% 20%;
-    --card: 85 25% 98%;
-    --card-foreground: 90 10% 20%;
-    --popover: 85 25% 98%;
-    --popover-foreground: 90 10% 20%;
-    --primary: 100 30% 50%;
-    --primary-foreground: 90 10% 15%;
-    --secondary: 90 20% 88%;
-    --secondary-foreground: 90 10% 25%;
-    --muted: 90 20% 92%;
-    --muted-foreground: 90 10% 45%;
-    --accent: 90 25% 85%;
-    --accent-foreground: 90 10% 20%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 90 20% 85%;
-    --input: 90 20% 88%;
-    --ring: 100 30% 50%;
+    /* ── Layer 1: raw palette ──────────────────────────────────────────
+       Warm off-white/cream, near-black charcoal, deep forest/olive green
+       as the signature accent, muted sage kept off body text (see
+       --accent-ink below — sage-on-cream measures ~2.3:1, nowhere near
+       AA). Values verified against WCAG contrast math, not eyeballed. */
+    --paper-50: 42 33% 96%;
+    --cream-100: 40 30% 92%;
+    --charcoal-900: 95 8% 11%;
+    --forest-700: 142 34% 18%;
+    --olive-600: 82 24% 30%;
+    --sage-400: 105 18% 60%;
+
+    /* ── Layer 2: shadcn semantic aliases ─────────────────────────────
+       Every ui/* component reads these names — aliasing them onto Layer
+       1 keeps that contract intact with zero component-level edits. */
+    --background: var(--paper-50);
+    --foreground: var(--charcoal-900);
+    --card: var(--cream-100);
+    --card-foreground: var(--charcoal-900);
+    --popover: var(--cream-100);
+    --popover-foreground: var(--charcoal-900);
+    --primary: var(--forest-700);
+    --primary-foreground: var(--paper-50);
+    --secondary: 40 25% 88%;
+    --secondary-foreground: var(--charcoal-900);
+    --muted: 40 20% 90%;
+    --muted-foreground: 90 10% 36%;
+    --accent: 100 20% 90%;
+    --accent-foreground: var(--charcoal-900);
+    --destructive: 4 72% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 20% 85%;
+    --input: 40 20% 88%;
+    --ring: var(--accent-ink);
     --radius: 0.75rem;
+
+    /* ── Layer 3: editorial tokens ─────────────────────────────────────
+       --primary is for fills and marks; --accent-ink is for text. Forest
+       green measures ~11:1 on paper-50, so it does double duty here, but
+       the split exists so a future punchier --primary can't silently
+       break text contrast the way the old flat sage did (~2.6:1, failed
+       AA). Ban `text-primary` on body copy — use `text-accent-ink`. */
+    --accent-ink: var(--forest-700);
+    --surface-raised: var(--card);
+    --surface-sunken: 40 22% 89%;
+    --hairline: var(--border);
+    --album-tint: var(--primary); /* per-project override, set inline — see src/content/projects.ts */
+
+    --dur-fast: 150ms;
+    --dur-base: 300ms;
+    --dur-slow: 600ms;
+    --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-track: cubic-bezier(0.65, 0, 0.35, 1);
+
+    --rail-w: 15rem;
+    --panel-w: 18.75rem;
+    --gutter: 1.5rem;
+    --grain-opacity: 0.035;
   }
 
   .dark {
-    --background: 85 10% 15%;
-    --foreground: 85 10% 95%;
-    --card: 85 10% 20%;
-    --card-foreground: 85 10% 95%;
-    --popover: 85 10% 15%;
-    --popover-foreground: 85 10% 95%;
-    --primary: 100 35% 65%;
-    --primary-foreground: 100 20% 10%;
-    --secondary: 85 10% 25%;
-    --secondary-foreground: 85 10% 95%;
-    --muted: 85 10% 25%;
-    --muted-foreground: 85 10% 70%;
-    --accent: 85 10% 30%;
-    --accent-foreground: 85 10% 95%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 85 10% 30%;
-    --input: 85 10% 25%;
-    --ring: 100 35% 65%;
+    --background: 95 10% 12%;
+    --foreground: 40 15% 92%;
+    --card: 92 9% 17%;
+    --card-foreground: 40 15% 92%;
+    --popover: 95 10% 12%;
+    --popover-foreground: 40 15% 92%;
+    --primary: 105 30% 68%;
+    --primary-foreground: 95 10% 12%;
+    --secondary: 95 8% 22%;
+    --secondary-foreground: 40 15% 92%;
+    --muted: 95 8% 22%;
+    --muted-foreground: 40 10% 68%;
+    --accent: 95 10% 26%;
+    --accent-foreground: 40 15% 92%;
+    --destructive: 4 55% 38%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 95 8% 26%;
+    --input: 95 8% 22%;
+    --ring: var(--accent-ink);
+
+    /* --primary already clears ~8.5:1 on the dark background, so
+       accent-ink can just alias it instead of needing its own value. */
+    --accent-ink: var(--primary);
+    --surface-raised: var(--card);
+    --surface-sunken: 95 9% 9%;
+    --hairline: var(--border);
   }
 }
 
@@ -68,6 +133,37 @@
   }
   h1, h2, h3 {
     letter-spacing: -0.02em;
+    /* Bricolage Grotesque doesn't ship the Inter-specific character
+       variants set globally on body — don't apply them to headings. */
+    font-feature-settings: normal;
+  }
+}
+
+/* Reduced motion — three tiers, not a blanket kill. Ambient/decorative
+   animation stops outright; state-change transitions collapse to
+   effectively-instant rather than disappearing, so interactions still
+   give feedback; transform-based reveals fall back to opacity-only. Any
+   JS-driven rAF loop (cursor, magnetic buttons, parallax — added in
+   Phase 9) must independently check this preference before starting,
+   since CSS alone can't stop one already running. */
+@media (prefers-reduced-motion: reduce) {
+  .motion-ambient {
+    animation: none !important;
+  }
+  :root {
+    --dur-fast: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+    /* Frozen at a fixed sweep position instead of the animation's 0%
+       start, so the hero's radial ring still reads as a ring rather
+       than vanishing when ambient motion is off. */
+    --ring-progress: 65;
+  }
+  [data-reveal] {
+    transform: none !important;
+  }
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -96,21 +192,45 @@
 .scrollbar-hide { scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* Playlist section header gradient — adapts to light/dark theme */
+/* Playlist section header gradient — adapts to light/dark theme.
+   Now drawn from the actual palette (sage-400 / forest-700) instead of
+   a one-off hardcoded green unrelated to either theme's tokens. */
 .playlist-header-gradient {
-  background: linear-gradient(180deg, hsl(100 40% 72% / 0.45) 0%, transparent 100%);
+  background: linear-gradient(180deg, hsl(var(--sage-400) / 0.45) 0%, transparent 100%);
 }
 .dark .playlist-header-gradient {
-  background: linear-gradient(180deg, hsl(100 35% 28% / 0.85) 0%, transparent 100%);
+  background: linear-gradient(180deg, hsl(var(--forest-700) / 0.85) 0%, transparent 100%);
+}
+
+/* Subtle scroll-driven parallax on the hero record — Chromium-only
+   today (animation-timeline: view()), invisible/inert elsewhere via
+   @supports rather than a JS fallback. Purely decorative, so silent
+   degradation is the correct behavior, not a bug to patch around.
+   Scoped to md+ — skipped on mobile entirely rather than just made
+   smaller, per the redesign plan's explicit mobile guidance to reduce
+   parallax (scroll perf/battery matter more there, and the record
+   renders smaller anyway so the effect reads as less deliberate). */
+@media (min-width: 768px) {
+  @supports (animation-timeline: view()) {
+    .parallax-hero {
+      animation: hero-parallax linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 60%;
+    }
+  }
+}
+@keyframes hero-parallax {
+  from { transform: translateY(0); }
+  to { transform: translateY(-28px); }
 }
 
 .animate-shimmer-text {
   background: linear-gradient(
     90deg,
     hsl(var(--primary)),
-    #4ade80,
-    #86efac,
-    #4ade80,
+    hsl(var(--sage-400)),
+    hsl(var(--olive-600)),
+    hsl(var(--sage-400)),
     hsl(var(--primary))
   );
   background-size: 300% auto;
