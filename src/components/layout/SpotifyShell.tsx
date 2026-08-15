@@ -53,7 +53,14 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           `relative` was redundant even before it became actively harmful. */}
       <div
         className={cn(
-          'hidden xl:flex shrink-0 self-start sticky top-0 bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
+          // min-w-0 overrides the flex item's default min-width:auto — without
+          // it, w-0 below is a no-op, since the flex-shrink algorithm won't
+          // shrink an item below its content's intrinsic size unless told to.
+          // (overflow stays visible *here* — the toggle button below is
+          // deliberately positioned outside this box on the left; clipping
+          // this element would cut the button off. The content div further
+          // down carries its own overflow-hidden instead.)
+          'hidden xl:flex min-w-0 shrink-0 self-start sticky top-0 bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
           rightOpen ? 'w-panel border-l border-border/60' : 'w-0'
         )}
       >
@@ -85,7 +92,12 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
             page left to scroll, and only in the last stretch of the
             page does it un-stick and scroll normally to reveal whatever
             didn't fit above the fold. One scroll gesture, not two. */}
-        <div className={cn('flex flex-col w-full', !rightOpen && 'invisible pointer-events-none')}>
+        {/* overflow-hidden here (not on the outer wrapper) is what actually
+            stops the collapsed-but-still-`invisible` content from bleeding
+            past the parent's zero width — its buttons/badges don't shrink
+            on their own and would otherwise widen the document and leave a
+            dead scrollable strip where the panel should have disappeared. */}
+        <div className={cn('flex flex-col w-full overflow-hidden', !rightOpen && 'invisible pointer-events-none')}>
           {rightPanel}
         </div>
       </div>

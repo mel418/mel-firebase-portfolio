@@ -79,7 +79,7 @@ export default async function Home({ searchParams }: PageProps) {
         {/* ── PROFILE HERO ── */}
         <section id="profile" className="scroll-mt-24">
           <div className="relative px-4 sm:px-8 pt-16 sm:pt-20 pb-12 playlist-header-gradient">
-            <AnimateIn direction="up" className="space-y-7">
+            <AnimateIn direction="up" className="space-y-9">
               <Eyebrow live className="tracking-[0.28em]">Now Playing</Eyebrow>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-end gap-7">
