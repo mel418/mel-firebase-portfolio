@@ -29,7 +29,7 @@ export function InstrumentCard({ skill }: { skill: SkillWithUsage }) {
   return (
     <div
       tabIndex={0}
-      className="group flex items-center gap-3 rounded-xl border border-border/60 bg-card/40 px-3.5 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md hover:shadow-primary/5 focus-visible:-translate-y-0.5 focus-visible:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group flex items-center gap-3 rounded-2xl border-2 border-primary/20 bg-card/70 px-3.5 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:-rotate-1 hover:border-primary/50 hover:shadow-md hover:shadow-primary/10 focus-visible:-translate-y-0.5 focus-visible:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       {Icon ? (
         <Icon className="h-6 w-6 shrink-0 text-foreground/80 transition-colors group-hover:text-primary" />

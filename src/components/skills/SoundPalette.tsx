@@ -1,17 +1,17 @@
-import { Code, Layers, Database, Wrench, type LucideIcon } from 'lucide-react';
 import { skillsWithUsage, type SkillCategory } from '@/content';
 import { InstrumentCard } from './InstrumentCard';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { AnimateIn } from '@/components/AnimateIn';
+import Image from 'next/image';
 
 // Category labels/icons for display — content (skills.ts) stays pure data.
 // Order matches how this has always rendered (Languages / Web / Databases
 // / Tools); only grid-visible skills (showInGrid: true) appear here.
-const GROUPS: { category: SkillCategory; label: string; icon: LucideIcon }[] = [
-  { category: 'languages', label: 'Languages', icon: Code },
-  { category: 'frameworks', label: 'Web', icon: Layers },
-  { category: 'data', label: 'Databases', icon: Database },
-  { category: 'tools', label: 'Tools', icon: Wrench },
+const GROUPS: { category: SkillCategory; label: string; folder: string }[] = [
+  { category: 'languages', label: 'Languages', folder: 'folder-star' },
+  { category: 'frameworks', label: 'Web', folder: 'folder-heart' },
+  { category: 'data', label: 'Databases', folder: 'folder-bow' },
+  { category: 'tools', label: 'Tools', folder: 'folder-star' },
 ];
 
 /** The skills section — a "sound palette" of instrument cards, entirely
@@ -20,7 +20,7 @@ const GROUPS: { category: SkillCategory; label: string; icon: LucideIcon }[] = [
  *  time in src/content/index.ts. */
 export function SoundPalette() {
   return (
-    <div className="divide-y divide-border/60 border-y border-border/60">
+    <div className="divide-y-2 divide-dashed divide-primary/20 border-y-2 border-dashed border-primary/20">
       {GROUPS.map((group, gi) => {
         const items = skillsWithUsage.filter((s) => s.showInGrid && s.category === group.category);
         if (items.length === 0) return null;
@@ -28,7 +28,7 @@ export function SoundPalette() {
           <AnimateIn key={group.category} delay={gi * 80}>
             <div className="grid gap-4 py-7 sm:grid-cols-[180px_1fr]">
               <div className="flex items-center gap-2.5">
-                <group.icon className="h-4 w-4 shrink-0 text-primary" />
+                <Image src={`/stickers/${group.folder}.png`} alt="" width={152} height={128} sizes="56px" className="h-auto w-14 shrink-0" />
                 <Eyebrow>{group.label}</Eyebrow>
               </div>
               <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-3">

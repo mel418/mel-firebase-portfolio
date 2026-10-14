@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Bricolage_Grotesque } from 'next/font/google';
+import { Inter, Nunito, Caveat } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
@@ -8,7 +8,11 @@ import { site } from '@/content';
 import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
-const headlineFont = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-headline', display: 'swap' });
+// Rounded, friendly display face for headings (the scrapbook direction) —
+// Nunito's heavy weights stay legible at oversized hero sizes. Caveat is the
+// handwritten accent, used only for short decorative notes, never body copy.
+const headlineFont = Nunito({ subsets: ['latin'], variable: '--font-headline', display: 'swap' });
+const handFont = Caveat({ subsets: ['latin'], variable: '--font-hand', display: 'swap' });
 
 export const metadata: Metadata = {
   // Required for per-project OG images (page.tsx's generateMetadata) to
@@ -41,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(inter.variable, headlineFont.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn(inter.variable, headlineFont.variable, handFont.variable)} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>

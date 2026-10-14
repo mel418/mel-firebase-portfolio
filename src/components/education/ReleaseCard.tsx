@@ -1,6 +1,7 @@
 import { Award, Users, GraduationCap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Tape } from '@/components/scrapbook/Tape';
 import type { Education } from '@/content';
 
 function Field({ icon: Icon, label, children }: { icon: typeof Award; label: string; children: React.ReactNode }) {
@@ -20,7 +21,8 @@ function Field({ icon: Icon, label, children }: { icon: typeof Award; label: str
  *  rather than a prose sentence. */
 export function ReleaseCard({ education }: { education: Education }) {
   return (
-    <div className="rounded-2xl border border-border/70 bg-card/40 p-6 sm:p-8">
+    <div className="paper-card relative rounded-[1.75rem] border-2 border-l-[6px] border-primary/30 border-l-primary/70 bg-card p-6 sm:p-8">
+      <Tape variant="beige" width={104} rotate={-5} className="-top-3 left-10" />
       <div className="flex flex-col gap-1.5 border-b border-border/60 pb-6 mb-6 sm:flex-row sm:items-baseline sm:justify-between">
         <div className="space-y-1.5">
           <Eyebrow>Release</Eyebrow>

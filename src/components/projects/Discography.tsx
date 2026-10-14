@@ -103,14 +103,14 @@ export function Discography({ projects, initialTrack }: Props) {
     <div className="space-y-6">
       {featured && (
         <AnimateIn>
-          <ProjectCard project={featured} variant="featured" isOpen={openSlug === featured.slug} onOpen={open} />
+          <ProjectCard project={featured} variant="featured" tiltDir={-1} isOpen={openSlug === featured.slug} onOpen={open} />
         </AnimateIn>
       )}
 
       <div className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
         {rest.map((project, i) => (
           <AnimateIn key={project.slug} delay={i * 60}>
-            <ProjectCard project={project} isOpen={openSlug === project.slug} onOpen={open} />
+            <ProjectCard project={project} tiltDir={i % 2 === 0 ? 1 : -1} isOpen={openSlug === project.slug} onOpen={open} />
           </AnimateIn>
         ))}
       </div>

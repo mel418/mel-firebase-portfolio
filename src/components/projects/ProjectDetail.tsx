@@ -57,8 +57,12 @@ export function ProjectDetail({ project }: Props) {
             </div>
           )}
 
-          <DialogTitle asChild>
-            <h3 className="font-headline text-2xl font-bold tracking-tight sm:text-3xl">{project.title}</h3>
+          {/* className goes on DialogTitle (not the h3): it runs through
+              tailwind-merge there, so these win over its built-in
+              font-semibold/text-lg. Put on the child, they'd just be
+              concatenated and the stylesheet order would decide. */}
+          <DialogTitle asChild className="font-headline text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
+            <h3>{project.title}</h3>
           </DialogTitle>
           <p className="text-base font-medium text-foreground/90">{project.tagline}</p>
           <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">{project.description}</p>

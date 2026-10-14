@@ -5,6 +5,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { Tape } from "@/components/scrapbook/Tape"
 
 const Dialog = DialogPrimitive.Root
 
@@ -45,11 +46,14 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-5xl max-h-[92dvh] overflow-y-auto scrollbar-hide translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border bg-card p-6 shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:p-9",
+        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-5xl max-h-[92dvh] overflow-y-auto scrollbar-hide translate-x-[-50%] translate-y-[-50%] gap-4 rounded-[2rem] border-2 border-primary/30 bg-card paper-card p-6 shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:p-9",
         className
       )}
       {...props}
     >
+      {/* Washi tape wrapping the top-left corner (clipped by the scroll box on
+          purpose — that's what makes it read as wrapping the edge). */}
+      <Tape variant="gingham" width={120} rotate={-38} className="-left-7 top-4" />
       {children}
       <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full p-1.5 text-muted-foreground opacity-100 transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none">
         <X className="h-4 w-4" />
