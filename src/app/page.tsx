@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import { Github, Linkedin, Mail, MapPin, GraduationCap, Code, Briefcase, Send } from 'lucide-react';
 
 import { AppSidebar } from '@/components/layout/AppSidebar';
@@ -17,7 +16,6 @@ import { SideB } from '@/components/contact/SideB';
 import { NowPlaying, type Song } from '@/components/NowPlaying';
 import { getNowPlaying } from '@/lib/spotify';
 import { site, projects, experience, education, getProject } from '@/content';
-import { HeroRecord } from '@/components/hero/HeroRecord';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { TrackNumber } from '@/components/primitives/TrackNumber';
 import { MagneticWrap } from '@/components/primitives/MagneticWrap';
@@ -84,58 +82,42 @@ export default async function Home({ searchParams }: PageProps) {
 
         {/* ── PROFILE HERO ── */}
         <section id="profile" className="scroll-mt-24">
-          {/* The hero is a music-player card pinned to the page: cloud
-              album art behind the record, washi tape, a few stickers. Stickers
-              are decorative (aria-hidden) and never carry content. */}
-          <div className="relative px-4 sm:px-8 pt-14 sm:pt-16 pb-14">
+          {/* The hero is a taped paper card with a few stickers. Stickers are
+              decorative (aria-hidden) and never carry content. (The old
+              spinning-record album art was removed at the owner's request —
+              HeroRecord.tsx is still in the repo, just not rendered.) */}
+          <div className="relative px-4 sm:px-8 pt-14 sm:pt-16 pb-16">
             <AnimateIn direction="up">
-              <div className="paper-card relative rounded-[2rem] border-2 border-primary/30 bg-card/90 p-6 sm:p-10">
+              <div className="paper-card relative rounded-[2rem] border-2 border-primary/30 bg-card/90 p-6 pb-24 sm:p-10 sm:pb-24 xl:pb-14">
                 <Tape variant="gingham" width={150} rotate={7} className="-top-4 right-8 sm:right-16" />
+                <Sticker name="heart" size={54} rotate={-10} className="-left-3 -top-5" float />
                 <Sticker name="sparkle" size={26} className="right-24 top-10 hidden sm:block" float />
                 <Sticker name="sparkle" size={18} className="right-40 top-24 hidden md:block" float />
                 <StickyNote rotate={4} className="absolute right-10 top-20 hidden w-52 2xl:block">
                   good music for a good day ♡
                 </StickyNote>
 
-                <div className="space-y-9">
+                <div className="space-y-7">
                   <Eyebrow live className="tracking-[0.28em]">Now Playing</Eyebrow>
 
-                  <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8">
-                    {/* Album art: cloud cover with the record on top */}
-                    <div className="relative w-full max-w-[17rem] shrink-0 sm:w-72 sm:max-w-none">
-                      <div className="relative grid aspect-square w-full place-items-center overflow-hidden rounded-[1.75rem] border-2 border-primary/30">
-                        <Image
-                          src="/stickers/album-cloud.png"
-                          alt=""
-                          fill
-                          sizes="288px"
-                          className="object-cover dark:brightness-[0.7]"
-                          priority
-                        />
-                        <HeroRecord artwork={site.heroArtwork} />
-                      </div>
-                      <Sticker name="teddy" size={128} rotate={-6} className="-bottom-9 -left-8" />
-                      <Sticker name="heart" size={54} rotate={12} className="-top-4 right-0 sm:-right-5" float />
-                    </div>
-
-                    {/* Name / tagline / meta */}
-                    <div className="space-y-4 pb-1">
-                      <Eyebrow className="tracking-[0.28em]">{site.status} · {site.title}</Eyebrow>
-                      <h1 className="text-5xl sm:text-7xl font-extrabold font-headline tracking-tight leading-[0.95]">
-                        {site.name}
-                      </h1>
-                      <p className="text-sm sm:text-lg font-bold animate-shimmer-text">
-                        {site.roles.join(' · ')}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-muted-foreground pt-1">
-                        <span className="inline-flex items-center gap-1.5"><GraduationCap className="h-3.5 w-3.5 text-primary" />{education.shortLabel}</span>
-                        <span className="text-border">·</span>
-                        <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" />{site.location}</span>
-                      </div>
+                  {/* Name / tagline / meta */}
+                  <div className="max-w-3xl space-y-4">
+                    <Eyebrow className="tracking-[0.28em]">{site.status} · {site.title}</Eyebrow>
+                    <h1 className="text-6xl sm:text-8xl font-extrabold font-headline tracking-tight leading-[0.95]">
+                      {site.name}
+                    </h1>
+                    <p className="text-base sm:text-xl font-bold animate-shimmer-text">
+                      {site.roles.join(' · ')}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-muted-foreground pt-1">
+                      <span className="inline-flex items-center gap-1.5"><GraduationCap className="h-3.5 w-3.5 text-primary" />{education.shortLabel}</span>
+                      <span className="text-border">·</span>
+                      <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" />{site.location}</span>
                     </div>
                   </div>
                 </div>
 
+                <Sticker name="teddy" size={128} rotate={-6} className="-bottom-12 right-3 sm:-bottom-10 sm:right-44" />
                 <Sticker name="bunny" size={140} rotate={5} className="-bottom-14 right-4 hidden sm:block" />
               </div>
             </AnimateIn>

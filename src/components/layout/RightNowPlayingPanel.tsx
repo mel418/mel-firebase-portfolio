@@ -61,8 +61,8 @@ export function RightNowPlayingPanel({ song }: Props) {
           <Sticker name="sparkle" size={22} className="-left-2 -top-3" float />
           <div className="relative aspect-[16/8] w-full rounded-3xl overflow-hidden border-2 border-primary/30 shadow-md">
             <Image
-              src={site.avatar.src}
-              alt={site.avatar.alt}
+              src={site.heroArtwork.src}
+              alt={site.heroArtwork.alt}
               fill
               className="object-cover object-center"
               sizes="300px"
