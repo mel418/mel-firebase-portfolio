@@ -31,7 +31,7 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
 
       {/* Left library rail — visible md+, pinned via sticky rather than
           relying on a viewport-height ancestor with overflow-hidden. */}
-      <div className="hidden md:flex flex-col w-rail shrink-0 sticky top-0 h-dvh bg-card/70 backdrop-blur-xl border-r border-border/60 overflow-y-auto scrollbar-hide">
+      <div className="hidden md:flex flex-col w-rail shrink-0 sticky top-0 h-dvh paper-texture bg-card/80 backdrop-blur-xl border-r-2 border-dashed border-primary/25 overflow-y-auto scrollbar-hide">
         {leftPanel}
       </div>
 
@@ -60,8 +60,8 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           // deliberately positioned outside this box on the left; clipping
           // this element would cut the button off. The content div further
           // down carries its own overflow-hidden instead.)
-          'hidden xl:flex min-w-0 shrink-0 self-start sticky top-0 bg-card/70 backdrop-blur-xl transition-all duration-300 ease-in-out',
-          rightOpen ? 'w-panel border-l border-border/60' : 'w-0'
+          'hidden xl:flex min-w-0 shrink-0 self-start sticky top-0 paper-texture bg-card/80 backdrop-blur-xl transition-all duration-300 ease-in-out',
+          rightOpen ? 'w-panel border-l-2 border-dashed border-primary/25' : 'w-0'
         )}
       >
         {/* Toggle button — sits on the left edge of the panel. -left-6 is

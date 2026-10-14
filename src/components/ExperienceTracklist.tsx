@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { AnimateIn } from '@/components/AnimateIn';
 import { TrackNumber } from '@/components/primitives/TrackNumber';
+import { RetroWindow } from '@/components/scrapbook/RetroWindow';
 import type { ExperienceEntry } from '@/content';
 
 export type { ExperienceEntry };
@@ -79,12 +80,12 @@ function ExperienceRow({ entry, index }: { entry: ExperienceEntry; index: number
 
 export function ExperienceTracklist({ experience }: Props) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/40">
+    <RetroWindow title="experience / tracklist" bodyClassName="p-0">
       {experience.map((entry, i) => (
         <AnimateIn key={entry.slug} delay={i * 60}>
           <ExperienceRow entry={entry} index={i} />
         </AnimateIn>
       ))}
-    </div>
+    </RetroWindow>
   );
 }

@@ -81,7 +81,7 @@
     --rail-w: 15rem;
     --panel-w: 18.75rem;
     --gutter: 1.5rem;
-    --grain-opacity: 0.035;
+    --grain-opacity: 1;
   }
 
   .dark {
@@ -111,6 +111,7 @@
     --surface-raised: var(--card);
     --surface-sunken: 95 9% 9%;
     --hairline: var(--border);
+    --grain-opacity: 0.55;
   }
 }
 
@@ -238,4 +239,39 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: shimmer-text 4s linear infinite;
+}
+
+/* ── Scrapbook utilities ─────────────────────────────────────────────────
+   Paper texture comes from public/stickers/paper-grain.png, generated with
+   Pillow (scripts/generate_stickers.py). Colours are all token-driven so the
+   look follows the site's green/cream palette in both themes. */
+.paper-texture {
+  background-image: url('/stickers/paper-grain.png');
+  background-size: 512px 512px;
+}
+.paper-card {
+  background-image: url('/stickers/paper-grain.png');
+  background-size: 512px 512px;
+  box-shadow:
+    0 12px 32px -14px hsl(var(--primary) / 0.35),
+    0 2px 6px hsl(var(--foreground) / 0.07);
+}
+
+/* Gingham ribbon — two translucent stripe layers crossing each other, the
+   same construction as real gingham, so it needs no image and recolours
+   itself per theme. */
+.gingham {
+  --g: hsl(var(--primary) / 0.26);
+  background-image:
+    repeating-linear-gradient(90deg, var(--g) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(0deg, var(--g) 0 8px, transparent 8px 16px);
+}
+
+/* Hand-placed sticker settle: a tiny rotate/lift on hover of the parent
+   group, so the page feels handled rather than laid out on a grid. */
+.sticker-pop {
+  transition: transform var(--dur-base) var(--ease-editorial);
+}
+.group:hover .sticker-pop {
+  transform: rotate(var(--pop-rot, -4deg)) translateY(-3px) scale(1.04);
 }

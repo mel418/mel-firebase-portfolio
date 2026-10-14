@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { SiSpotify } from '@icons-pack/react-simple-icons';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tape } from '@/components/scrapbook/Tape';
 
 export type Song = {
   isPlaying: boolean;
@@ -41,11 +42,17 @@ function LiveProgressBar({ progressMs, durationMs }: { progressMs: number; durat
   }, [progressMs, durationMs]);
 
   return (
-    <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
+    <div className="relative h-1 w-full rounded-full bg-muted">
       <div
-        className="h-full rounded-full bg-primary"
+        className="relative h-full rounded-full bg-primary"
         style={{ width: `${pct}%`, transitionProperty: 'width', transitionTimingFunction: 'linear', transitionDuration: `${remainingMs}ms` }}
-      />
+      >
+        {/* The knob is a child of the fill, so it rides the same single CSS
+            transition — no second animation to keep in sync. */}
+        <span aria-hidden="true" className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2">
+          <Image src="/stickers/flower-knob.png" alt="" width={102} height={102} sizes="22px" className="h-[22px] w-[22px]" />
+        </span>
+      </div>
     </div>
   );
 }
@@ -60,7 +67,9 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
         className="block"
       >
         <div className="space-y-3 hover:opacity-90 transition-opacity">
-          <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg ring-1 ring-border/40 bg-muted">
+          <div className="relative w-full aspect-square">
+            <Tape variant="gingham" width={96} rotate={-6} className="-top-3 left-6" />
+            <div className="relative h-full w-full overflow-hidden rounded-3xl border-2 border-primary/30 bg-muted shadow-lg">
             {song?.albumImageUrl ? (
               <Image
                 src={song.albumImageUrl}
@@ -70,15 +79,20 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
                 sizes="280px"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <SiSpotify className="h-16 w-16 text-muted-foreground" />
-              </div>
+              <Image
+                src="/stickers/album-cloud.png"
+                alt=""
+                fill
+                className="object-cover dark:brightness-[0.7]"
+                sizes="280px"
+              />
             )}
-            <div className="absolute top-2 right-2">
+            <div className="absolute top-2 right-2 rounded-full bg-card/90 p-1.5 shadow-md">
               <SiSpotify
-                className="h-6 w-6 drop-shadow-lg"
+                className="h-5 w-5"
                 color={song?.isPlaying ? '#1DB954' : 'currentColor'}
               />
+            </div>
             </div>
           </div>
 
@@ -90,7 +104,7 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
                 </span>
               )}
-              <p className="font-semibold text-base truncate">
+              <p className="font-headline font-extrabold text-base truncate">
                 {song?.isPlaying ? song.title : 'Not playing'}
               </p>
             </div>

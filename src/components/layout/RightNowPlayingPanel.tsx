@@ -10,6 +10,8 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { site, education } from '@/content';
 import { NowViewing } from '@/components/layout/NowViewing';
 import { ErrorBoundary } from '@/components/primitives/ErrorBoundary';
+import { Tape } from '@/components/scrapbook/Tape';
+import { Sticker } from '@/components/scrapbook/Sticker';
 
 const githubHref = site.socials.find((s) => s.type === 'github')!.href;
 const linkedinHref = site.socials.find((s) => s.type === 'linkedin')!.href;
@@ -47,7 +49,10 @@ export function RightNowPlayingPanel({ song }: Props) {
         <div className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">About the artist</p>
 
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden ring-1 ring-border/60">
+          <div className="relative">
+          <Tape variant="beige" width={84} rotate={5} className="-top-3 right-8" />
+          <Sticker name="sparkle" size={22} className="-left-2 -top-3" float />
+          <div className="relative w-full aspect-video rounded-3xl overflow-hidden border-2 border-primary/30 shadow-md">
             <Image
               src={site.avatar.src}
               alt={site.avatar.alt}
@@ -61,8 +66,9 @@ export function RightNowPlayingPanel({ song }: Props) {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
-              <p className="text-white font-bold font-headline text-lg leading-tight tracking-tight">{site.name}</p>
+              <p className="text-white font-extrabold font-headline text-lg leading-tight tracking-tight">{site.name}</p>
             </div>
+          </div>
           </div>
 
           <p className="text-sm text-muted-foreground leading-relaxed">

@@ -32,7 +32,7 @@ function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
       aria-current={isActive ? 'true' : undefined}
       className={cn(
         'relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group',
-        isActive ? 'bg-primary/10' : 'hover:bg-accent/60'
+        isActive ? 'bg-primary/15 ring-2 ring-primary/25' : 'hover:bg-accent/60'
       )}
     >
       <span className="font-code w-4 shrink-0 text-[10px] text-muted-foreground [font-variant-numeric:tabular-nums]">
@@ -108,12 +108,12 @@ export function AppSidebar() {
     <aside aria-label="Library" className="flex flex-col h-full p-4 space-y-6">
       <div className="flex items-center gap-2.5 px-2 pt-2">
         <Library className="h-6 w-6 text-primary shrink-0" />
-        <span className="text-lg font-bold font-headline tracking-tight">Your Library</span>
+        <span className="text-lg font-extrabold font-headline tracking-tight">Your Library</span>
       </div>
 
       <NavList />
 
-      <div className="space-y-2 pt-3 border-t border-border/60">
+      <div className="space-y-2 pt-3 border-t-2 border-dashed border-primary/25">
         {/* asChild renders a single <a> carrying the Button's styles,
             instead of nesting a <button> inside an <a> — invalid HTML
             (interactive content can't nest) that also creates two
