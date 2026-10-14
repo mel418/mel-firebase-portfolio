@@ -13,20 +13,29 @@ type Props = {
   isOpen: boolean;
   onOpen: (slug: string) => void;
   variant?: 'featured' | 'grid';
+  /** Which way the card leans. Discography alternates this by grid position so neighbours lean opposite ways. */
+  tiltDir?: 1 | -1;
 };
 
 const TAPE_VARIANTS = ['gingham', 'beige', 'sage'] as const;
 
-/** Stable per-project "hand placement" — tape colour, tape angle and resting
- *  tilt are derived from the slug, so SSR and client agree (no hydration
- *  mismatch) while every card still looks individually stuck down. */
+/** Stable per-project "hand placement" — tape colour, tape angle and the
+ *  *size* of the resting tilt are derived from the slug, so SSR and client
+ *  agree (no hydration mismatch) while every card still looks individually
+ *  stuck down. The tilt is never 0: an earlier version mapped the hash onto
+ *  -0.7..0.7deg in 0.35 steps, so ~1 in 5 slugs landed on exactly 0 and sat
+ *  perfectly straight among its crooked neighbours. The direction comes
+ *  from the caller (grid position) instead of the hash. */
 function placement(slug: string) {
   let h = 0;
   for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
   return {
     tape: TAPE_VARIANTS[h % TAPE_VARIANTS.length],
-    tapeRotate: ((h >> 3) % 7) - 3,
-    tilt: (((h >> 5) % 5) - 2) * 0.35,
+    // `>>>` (unsigned), not `>>`: h is a uint32, and a signed shift makes it
+    // negative for large hashes — then `% 3` is -1/-2, the array lookup is
+    // undefined, and the tilt silently becomes NaN (no rotation at all).
+    tapeRotate: ((h >>> 3) % 7) - 3,
+    tiltSize: [0.6, 0.9, 1.2][(h >>> 5) % 3],
   };
 }
 
@@ -45,9 +54,11 @@ function placement(slug: string) {
  * (it would clip the tape straddling the top edge), so the cover carries
  * its own rounded clipping instead.
  */
-export function ProjectCard({ project, isOpen, onOpen, variant = 'grid' }: Props) {
+export function ProjectCard({ project, isOpen, onOpen, variant = 'grid', tiltDir = 1 }: Props) {
   const isFeatured = variant === 'featured';
-  const { tape, tapeRotate, tilt } = placement(project.slug);
+  const { tape, tapeRotate, tiltSize } = placement(project.slug);
+  // The wide featured card gets a gentler lean — the same angle shifts its far end much more.
+  const tilt = tiltDir * (isFeatured ? 0.4 : tiltSize);
 
   return (
     <button
@@ -62,7 +73,7 @@ export function ProjectCard({ project, isOpen, onOpen, variant = 'grid' }: Props
         isOpen ? 'border-primary/60' : 'border-primary/25 hover:-translate-y-1.5 hover:border-primary/55',
         isFeatured ? 'md:grid md:grid-cols-2 md:items-stretch' : 'h-full'
       )}
-      style={{ ['--album-tint' as string]: project.tint, ['--card-tilt' as string]: `${isFeatured ? 0 : tilt}deg` }}
+      style={{ ['--album-tint' as string]: project.tint, ['--card-tilt' as string]: `${tilt}deg` }}
     >
       <Tape variant={tape} width={isFeatured ? 120 : 96} rotate={tapeRotate} className="-top-3 left-1/2 -translate-x-1/2" />
 
