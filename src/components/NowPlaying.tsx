@@ -64,10 +64,15 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
         href={song?.songUrl || 'https://open.spotify.com'}
         target="_blank"
         rel="noopener noreferrer"
-        className="block"
+        className="flex min-h-0 flex-1 flex-col"
       >
-        <div className="space-y-3 hover:opacity-90 transition-opacity">
-          <div className="relative w-full aspect-square">
+        <div className="flex min-h-0 flex-1 flex-col gap-3 hover:opacity-90 transition-opacity">
+          {/* The art takes whatever height the panel has left (the panel is
+              exactly one screen tall — no scrolling). Size-container + min()
+              keeps it a true square at any height: as wide as the column
+              allows, but never taller than the space available. */}
+          <div className="max-h-[16.75rem] min-h-[6rem] flex-1 [container-type:size]">
+          <div className="relative mx-auto aspect-square w-[min(100cqw,100cqh)]">
             <Tape variant="gingham" width={96} rotate={-6} className="-top-3 left-6" />
             <div className="relative h-full w-full overflow-hidden rounded-3xl border-2 border-primary/30 bg-muted shadow-lg">
             {song?.albumImageUrl ? (
@@ -95,8 +100,9 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
             </div>
             </div>
           </div>
+          </div>
 
-          <div className="space-y-1">
+          <div className="shrink-0 space-y-1">
             <div className="flex items-center gap-2">
               {song?.isPlaying && (
                 <span className="relative flex h-2 w-2 shrink-0">
@@ -114,7 +120,9 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
           </div>
 
           {song?.isPlaying && song.progressMs !== undefined && song.durationMs !== undefined && (
-            <LiveProgressBar progressMs={song.progressMs} durationMs={song.durationMs} />
+            <div className="shrink-0">
+              <LiveProgressBar progressMs={song.progressMs} durationMs={song.durationMs} />
+            </div>
           )}
         </div>
       </a>

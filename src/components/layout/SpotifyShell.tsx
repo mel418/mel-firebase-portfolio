@@ -60,7 +60,7 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           // deliberately positioned outside this box on the left; clipping
           // this element would cut the button off. The content div further
           // down carries its own overflow-hidden instead.)
-          'hidden xl:flex min-w-0 shrink-0 self-start sticky top-0 paper-texture bg-card/80 backdrop-blur-xl transition-all duration-300 ease-in-out',
+          'hidden xl:flex h-dvh min-w-0 shrink-0 self-start sticky top-0 paper-texture bg-card/80 backdrop-blur-xl transition-all duration-300 ease-in-out',
           rightOpen ? 'w-panel border-l-2 border-dashed border-primary/25' : 'w-0'
         )}
       >
@@ -89,21 +89,17 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           </button>
         </MagneticWrap>
 
-        {/* Panel content — no independent scroll zone anymore. It used to
-            be clipped to h-dvh with its own overflow-y-auto, which read
-            as an awkward second scrollbar nested inside the page's main
-            scroll. Now the panel is unconstrained (self-start so it
-            doesn't stretch to match <main>'s height) and just sticky —
-            its top stays pinned to the viewport for as long as there's
-            page left to scroll, and only in the last stretch of the
-            page does it un-stick and scroll normally to reveal whatever
-            didn't fit above the fold. One scroll gesture, not two. */}
+        {/* Panel content — exactly one screen tall (the wrapper above is
+            h-dvh + sticky), and the panel's own layout fits that height by
+            flexing the Spotify art and dropping secondary copy on short
+            screens (see RightNowPlayingPanel). So there is no scroll zone to
+            speak of — the whole panel just stays put while the page scrolls. */}
         {/* overflow-hidden here (not on the outer wrapper) is what actually
             stops the collapsed-but-still-`invisible` content from bleeding
             past the parent's zero width — its buttons/badges don't shrink
             on their own and would otherwise widen the document and leave a
             dead scrollable strip where the panel should have disappeared. */}
-        <div className={cn('flex flex-col w-full overflow-hidden', !rightOpen && 'invisible pointer-events-none')}>
+        <div className={cn('flex h-full min-h-0 w-full flex-col overflow-hidden', !rightOpen && 'invisible pointer-events-none')}>
           {rightPanel}
         </div>
       </div>

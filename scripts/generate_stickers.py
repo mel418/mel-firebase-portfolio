@@ -284,72 +284,131 @@ def album_cloud():
     save(d.img, 'album-cloud.png', (480, 480))
 
 
+# ── doodle style (Pinterest / Xiaohongshu sticker look) ──────────────────────
+# Wobbly marker outline in a soft dark brown (never pure black), flat pastel
+# fills nudged a few px off the line like a risograph misprint, dot eyes,
+# blush cheeks with hatch marks. Shapes are hand-wobbled with low-frequency
+# noise, seeded so every run produces the identical drawing.
+LINE = (64, 48, 42)
+LINE_W = 4.6
+
+
+def blob(cx, cy, rx, ry, seed, jitter=0.03, n=110):
+    rnd = random.Random(seed)
+    phases = [rnd.uniform(0, math.tau) for _ in range(3)]
+    amps = [jitter, jitter * 0.6, jitter * 0.4]
+    pts = []
+    for i in range(n):
+        t = math.tau * i / n
+        k = 1 + sum(a * math.sin((m + 2) * t + p) for m, (a, p) in enumerate(zip(amps, phases)))
+        pts.append((cx + math.cos(t) * rx * k, cy + math.sin(t) * ry * k))
+    return pts
+
+
+def rot(pts, deg, cx, cy):
+    c, s_ = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+    return [(cx + (x - cx) * c - (y - cy) * s_, cy + (x - cx) * s_ + (y - cy) * c) for x, y in pts]
+
+
+def arc_pts(cx, cy, rx, ry, a0, a1, n=28):
+    return [(cx + rx * math.cos(math.radians(a0 + (a1 - a0) * k / (n - 1))),
+             cy + ry * math.sin(math.radians(a0 + (a1 - a0) * k / (n - 1)))) for k in range(n)]
+
+
+def stroke(d, pts, w=LINE_W, color=LINE):
+    d.line(pts, color, w)
+    for x, y in (pts[0], pts[-1]):  # round caps
+        d.ell(x, y, w / 2, fill=color)
+
+
+def doodle(d, pts, fill=None, w=LINE_W, off=3.2):
+    """Flat fill (offset, misprinted) + wobbly closed outline on top."""
+    if fill is not None:
+        d.poly([(x + off, y + off) for x, y in pts], fill=fill)
+    stroke(d, pts + [pts[0], pts[1]], w)
+
+
+def face(d, cx, cy, spread, cheek=(244, 168, 156), mouth_dy=20):
+    """Dot eyes with a highlight, tiny nose, 'w' mouth, hatch-mark cheeks."""
+    for sx in (-spread, spread):
+        d.ell(cx + sx, cy, 6.6, fill=LINE)
+        d.ell(cx + sx + 2.2, cy - 2.4, 2.2, fill=WHITE)
+    layer, ld = d.overlay()
+    for sx in (-spread - 14, spread + 14):
+        ld.ellipse([(cx + sx - 15) * S, (cy + 16 - 10) * S, (cx + sx + 15) * S, (cy + 16 + 10) * S], fill=cheek + (170,))
+    d.commit(layer)
+    for sx in (-spread - 14, spread + 14):
+        for k in (-7, 0, 7):  # three little hatch marks on each cheek
+            stroke(d, [(cx + sx + k, cy + 12), (cx + sx + k - 3, cy + 20)], 1.8, (214, 120, 112))
+    stroke(d, arc_pts(cx - 6, cy + mouth_dy, 6.5, 5.5, 0, 180), 3.2)
+    stroke(d, arc_pts(cx + 6, cy + mouth_dy, 6.5, 5.5, 0, 180), 3.2)
+
+
+def tiny_sparkle(d, cx, cy, r):
+    stroke(d, sparkle_points(cx, cy, r) + [sparkle_points(cx, cy, r)[0]], 2.4)
+
+
 def teddy():
     W = H = 300
     d = D(W, H)
-    o = BROWN_DK
-    # ears
-    for cx in (84, 216):
-        d.ell(cx, 78, 38, fill=BROWN, outline=o, width=3.2)
-        d.ell(cx, 80, 21, fill=(232, 176, 156), outline=None)
-    # body & limbs
-    d.ell(150, 240, 70, 58, fill=BROWN, outline=o, width=3.2)
-    d.ell(150, 250, 40, 34, fill=CREAM, outline=None)
-    for cx, ang in ((86, 1), (214, -1)):
-        d.ell(cx, 222, 22, 36, fill=BROWN, outline=o, width=3.2)
-    for cx in (110, 190):
-        d.ell(cx, 288, 28, 17, fill=BROWN, outline=o, width=3.2)
-        d.ell(cx, 290, 14, 8, fill=(236, 172, 160))
+    TAN, TAN_DK = (226, 178, 134), (240, 196, 168)
+    # ears first so the head covers their lower halves
+    for k, ex in enumerate((86, 214)):
+        doodle(d, blob(ex, 74, 34, 33, 10 + k), TAN)
+        d.poly([(x + 2, y + 3) for x, y in blob(ex, 77, 17, 16, 20 + k)], fill=(244, 188, 176))
+    # little body + feet
+    for k, fx in enumerate((108, 192)):
+        doodle(d, blob(fx, 282, 24, 14, 30 + k), TAN)
+    doodle(d, blob(150, 238, 60, 50, 40), TAN)
+    d.poly([(x + 3, y + 3) for x, y in blob(150, 248, 33, 29, 41)], fill=CREAM)
+    # arms hugging a sage heart
+    doodle(d, rot(blob(96, 228, 17, 28, 50), 18, 96, 228), TAN)
+    doodle(d, rot(blob(204, 228, 17, 28, 51), -18, 204, 228), TAN)
+    doodle(d, heart_points(150, 236, 56), HEART + (255,), w=4.2)
     # head
-    d.ell(150, 138, 90, 82, fill=BROWN, outline=o, width=3.4)
-    d.ell(150, 168, 38, 30, fill=CREAM, outline=o, width=2.4)
-    d.ell(150, 152, 11, 8, fill=INK)
-    d.line([(150, 160), (150, 170)], INK, 2.2)
-    d.arc(139, 170, 11, 8, 10, 170, INK, 2.2)
-    d.arc(161, 170, 11, 8, 10, 170, INK, 2.2)
-    for cx in (112, 188):
-        d.ell(cx, 128, 8, 9, fill=INK)
-        d.ell(cx + 2.5, 124.5, 2.8, fill=WHITE)
-    cheek, cd = d.overlay()
-    for cx in (92, 208):
-        cd.ellipse([(cx - 17) * S, (160 - 11) * S, (cx + 17) * S, (160 + 11) * S], fill=CHEEK)
-    d.commit(cheek)
-    # tiny bow on one ear
-    bow(d, 232, 52, 17, color=PINK, outline=DEEP)
+    doodle(d, blob(150, 134, 90, 76, 60, jitter=0.022), TAN)
+    doodle(d, blob(150, 160, 33, 24, 61), CREAM, w=3.8)
+    d.poly([(x + 1.5, y + 1.5) for x, y in blob(150, 148, 10, 7, 62)], fill=LINE)
+    face(d, 150, 130, 40, mouth_dy=37)
+    # stray doodle sparkles + a little heart
+    tiny_sparkle(d, 42, 58, 13)
+    tiny_sparkle(d, 262, 150, 9)
+    doodle(d, heart_points(262, 98, 22), (255, 255, 255, 255), w=3.4, off=0)
     save(stickerize(d.img, border=6, border_color=(255, 250, 244)), 'teddy.png')
 
 
 def bunny():
     W = H = 300
     d = D(W, H)
-    o = (150, 120, 112)
-    # ears (rotated layers so they can lean)
-    for cx, ang in ((104, 9), (196, -9)):
-        layer = Image.new('RGBA', (80 * S, 170 * S), (0, 0, 0, 0))
-        ld = ImageDraw.Draw(layer)
-        ld.ellipse([8 * S, 6 * S, 72 * S, 164 * S], fill=CREAM + (255,), outline=o, width=int(3.2 * S))
-        ld.ellipse([22 * S, 30 * S, 58 * S, 140 * S], fill=PINK + (255,))
-        d.paste_layer(layer, cx, 78, ang)
-    # head + body
-    d.ell(150, 244, 62, 52, fill=CREAM, outline=o, width=3.2)
-    d.ell(150, 178, 92, 78, fill=CREAM, outline=o, width=3.4)
-    # headphone band over the head
-    d.arc(150, 168, 98, 98, 196, 344, INK, 11)
-    # earcups
-    for cx in (50, 250):
-        d.rrect(cx - 19, 142, cx + 19, 214, 16, fill=INK)
-        d.rrect(cx - 10, 152, cx + 10, 204, 9, fill=ROSE)
-    # face
-    for cx in (112, 188):
-        d.ell(cx, 176, 8, 9.5, fill=INK)
-        d.ell(cx + 2.6, 172.4, 2.8, fill=WHITE)
-    d.poly([(143, 192), (157, 192), (150, 201)], fill=ROSE)
-    d.arc(140, 201, 10, 8, 10, 170, INK, 2.2)
-    d.arc(160, 201, 10, 8, 10, 170, INK, 2.2)
-    cheek, cd = d.overlay()
-    for cx in (92, 208):
-        cd.ellipse([(cx - 17) * S, (196 - 11) * S, (cx + 17) * S, (196 + 11) * S], fill=CHEEK)
-    d.commit(cheek)
+    FUR, INNER = (253, 249, 241), (232, 202, 190)
+    # tall ears, tipped slightly apart, drawn before the head
+    for k, (ex, ang) in enumerate(((112, -9), (190, 10))):
+        pts = rot(blob(ex, 66, 21, 62, 70 + k, jitter=0.025), ang, ex, 100)
+        doodle(d, pts, FUR)
+        inner = rot(blob(ex, 70, 9.5, 46, 80 + k), ang, ex, 100)
+        d.poly([(x + 2, y + 3) for x, y in inner], fill=INNER)
+    # body, feet, arms
+    for k, fx in enumerate((118, 182)):
+        doodle(d, blob(fx, 286, 22, 12, 90 + k), FUR)
+    doodle(d, blob(150, 246, 52, 44, 92), FUR)
+    doodle(d, rot(blob(104, 240, 14, 24, 93), 20, 104, 240), FUR)
+    doodle(d, rot(blob(196, 240, 14, 24, 94), -20, 196, 240), FUR)
+    # head
+    doodle(d, blob(150, 152, 88, 70, 95, jitter=0.02), FUR)
+    # headphones in sage: band over the head, cups at the sides
+    band = arc_pts(150, 150, 96, 94, 196, 344, n=40)
+    stroke(d, band, 10.5, LINE)
+    stroke(d, band, 5.2, (176, 201, 163))
+    for k, cx in enumerate((58, 242)):
+        doodle(d, blob(cx, 160, 19, 28, 100 + k, jitter=0.02), (176, 201, 163), w=4.2)
+        d.poly([(x + 1, y + 1) for x, y in blob(cx, 160, 8, 15, 102 + k)], fill=(226, 236, 218))
+    face(d, 150, 156, 36)
+    # little music-note doodles
+    for nx, ny in ((256, 58), (36, 92)):
+        stroke(d, [(nx, ny), (nx, ny - 26)], 3)
+        stroke(d, [(nx, ny - 26), (nx + 12, ny - 20)], 3)
+        d.poly([(x + 1, y + 1) for x, y in blob(nx - 4, ny + 1, 7, 5, int(nx))], fill=LINE)
+    tiny_sparkle(d, 270, 120, 9)
     save(stickerize(d.img, border=6, border_color=(255, 250, 244)), 'bunny-headphones.png')
 
 

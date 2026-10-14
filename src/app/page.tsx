@@ -114,7 +114,7 @@ export default async function Home({ searchParams }: PageProps) {
                         />
                         <HeroRecord artwork={site.heroArtwork} />
                       </div>
-                      <Sticker name="teddy" size={104} rotate={-8} className="-bottom-7 -left-6" />
+                      <Sticker name="teddy" size={128} rotate={-6} className="-bottom-9 -left-8" />
                       <Sticker name="heart" size={54} rotate={12} className="-top-4 right-0 sm:-right-5" float />
                     </div>
 
@@ -136,7 +136,7 @@ export default async function Home({ searchParams }: PageProps) {
                   </div>
                 </div>
 
-                <Sticker name="bunny" size={118} rotate={6} className="-bottom-12 right-4 hidden sm:block" />
+                <Sticker name="bunny" size={140} rotate={5} className="-bottom-14 right-4 hidden sm:block" />
               </div>
             </AnimateIn>
           </div>
