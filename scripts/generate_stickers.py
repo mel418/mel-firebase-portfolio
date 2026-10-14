@@ -20,6 +20,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter
 S = 4  # supersample factor
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.normpath(os.path.join(ROOT, '..', 'public', 'stickers'))
+APP = os.path.normpath(os.path.join(ROOT, '..', 'src', 'app'))  # favicon files live here (Next file convention)
 os.makedirs(OUT, exist_ok=True)
 
 # ── palette ──────────────────────────────────────────────────────────────────
@@ -584,6 +585,48 @@ def paper_grain():
     img.save(os.path.join(OUT, 'paper-grain.png'), optimize=True)
 
 
+# ── favicon ──────────────────────────────────────────────────────────────────
+def favicon_master(rounded):
+    """The doodle bear's face on a sage tile, drawn in 256-unit space.
+
+    Deliberately bolder and simpler than the bear sticker: outlines are thick
+    and the mouth/hatch marks are left out so it still reads at 16px. The
+    master renders at 1024px and every output size is a LANCZOS downscale.
+    """
+    d = D(256, 256)
+    tile = (200, 218, 188)  # a touch lighter than the sticker sage, so the bear pops
+    if rounded:
+        d.rrect(0, 0, 255.5, 255.5, 58, fill=tile)
+    else:
+        d.rrect(0, 0, 255.5, 255.5, 0, fill=tile)  # opaque full-bleed square (iOS rounds it itself)
+    TAN = (226, 178, 134)
+    W, OFF = 11, 6
+    for k, ex in enumerate((72, 184)):
+        doodle(d, blob(ex, 72, 36, 35, 10 + k), TAN, w=W, off=OFF)
+        d.poly([(x + 3, y + 4) for x, y in blob(ex, 76, 16, 15, 20 + k)], fill=(244, 188, 176))
+    doodle(d, blob(128, 144, 86, 76, 60, jitter=0.02), TAN, w=W, off=OFF)
+    doodle(d, blob(128, 172, 34, 25, 61), CREAM, w=W - 2, off=OFF - 2)
+    d.poly([(x + 2, y + 2) for x, y in blob(128, 160, 12, 9, 62)], fill=LINE)
+    for sx in (-34, 34):
+        d.ell(128 + sx, 136, 10, fill=LINE)
+        d.ell(128 + sx + 3, 132, 3.4, fill=WHITE)
+    layer, ld = d.overlay()
+    for sx in (-56, 56):
+        ld.ellipse([(128 + sx - 15) * S, (166 - 10) * S, (128 + sx + 15) * S, (166 + 10) * S], fill=CHEEK[:3] + (175,))
+    d.commit(layer)
+    return d.img
+
+
+def favicon():
+    rounded = favicon_master(True)
+    square = favicon_master(False)
+    rounded.resize((512, 512), Image.LANCZOS).save(os.path.join(APP, 'icon.png'), optimize=True)
+    square.resize((180, 180), Image.LANCZOS).convert('RGB').save(os.path.join(APP, 'apple-icon.png'), optimize=True)
+    # .ico with real 16/32/48 frames, each downscaled from the master
+    rounded.resize((256, 256), Image.LANCZOS).save(
+        os.path.join(APP, 'favicon.ico'), format='ICO', sizes=[(16, 16), (32, 32), (48, 48)])
+
+
 def main():
     heart_glossy()
     sparkle('sparkle-sage.png', ROSE + (255,))
@@ -602,6 +645,7 @@ def main():
     folder('folder-bow.png', 'bow')
     pixel_art()
     paper_grain()
+    favicon()
     print('wrote', len(os.listdir(OUT)), 'files to', OUT)
 
 
