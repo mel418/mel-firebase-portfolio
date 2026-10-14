@@ -117,8 +117,7 @@ export default async function Home({ searchParams }: PageProps) {
                   </div>
                 </div>
 
-                <Sticker name="teddy" size={128} rotate={-6} className="-bottom-12 right-3 sm:-bottom-10 sm:right-44" />
-                <Sticker name="bunny" size={140} rotate={5} className="-bottom-14 right-4 hidden sm:block" />
+                <Sticker name="bunny" size={165} rotate={4} className="-bottom-16 right-2 sm:right-8" />
               </div>
             </AnimateIn>
           </div>

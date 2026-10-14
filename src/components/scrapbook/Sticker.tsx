@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
  * layout shift); `size` below sets the *displayed* width.
  */
 export const STICKER_FILES = {
-  teddy: { src: '/stickers/teddy.png', w: 336, h: 336 },
   bunny: { src: '/stickers/bunny-headphones.png', w: 336, h: 336 },
   heart: { src: '/stickers/heart-green.png', w: 188, h: 188 },
   star: { src: '/stickers/star-sage.png', w: 140, h: 140 },
