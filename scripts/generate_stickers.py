@@ -20,6 +20,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter
 S = 4  # supersample factor
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.normpath(os.path.join(ROOT, '..', 'public', 'stickers'))
+APP = os.path.normpath(os.path.join(ROOT, '..', 'src', 'app'))  # favicon files live here (Next file convention)
 os.makedirs(OUT, exist_ok=True)
 
 # ── palette ──────────────────────────────────────────────────────────────────
@@ -348,67 +349,72 @@ def tiny_sparkle(d, cx, cy, r):
     stroke(d, sparkle_points(cx, cy, r) + [sparkle_points(cx, cy, r)[0]], 2.4)
 
 
-def teddy():
-    W = H = 300
-    d = D(W, H)
-    TAN, TAN_DK = (226, 178, 134), (240, 196, 168)
-    # ears first so the head covers their lower halves
-    for k, ex in enumerate((86, 214)):
-        doodle(d, blob(ex, 74, 34, 33, 10 + k), TAN)
-        d.poly([(x + 2, y + 3) for x, y in blob(ex, 77, 17, 16, 20 + k)], fill=(244, 188, 176))
-    # little body + feet
-    for k, fx in enumerate((108, 192)):
-        doodle(d, blob(fx, 282, 24, 14, 30 + k), TAN)
-    doodle(d, blob(150, 238, 60, 50, 40), TAN)
-    d.poly([(x + 3, y + 3) for x, y in blob(150, 248, 33, 29, 41)], fill=CREAM)
-    # arms hugging a sage heart
-    doodle(d, rot(blob(96, 228, 17, 28, 50), 18, 96, 228), TAN)
-    doodle(d, rot(blob(204, 228, 17, 28, 51), -18, 204, 228), TAN)
-    doodle(d, heart_points(150, 236, 56), HEART + (255,), w=4.2)
-    # head
-    doodle(d, blob(150, 134, 90, 76, 60, jitter=0.022), TAN)
-    doodle(d, blob(150, 160, 33, 24, 61), CREAM, w=3.8)
-    d.poly([(x + 1.5, y + 1.5) for x, y in blob(150, 148, 10, 7, 62)], fill=LINE)
-    face(d, 150, 130, 40, mouth_dy=37)
-    # stray doodle sparkles + a little heart
-    tiny_sparkle(d, 42, 58, 13)
-    tiny_sparkle(d, 262, 150, 9)
-    doodle(d, heart_points(262, 98, 22), (255, 255, 255, 255), w=3.4, off=0)
-    save(stickerize(d.img, border=6, border_color=(255, 250, 244)), 'teddy.png')
+PLUSH = (251, 244, 232)       # warm cream fur (flat — no texture)
+SILVER = (206, 214, 207)       # headphone shells (cool silver with a hint of sage)
+SILVER_DK = (172, 184, 174)
+
+
+def headphones(d, band_c, band_rx, band_ry, cups, cup_rx, cup_ry, band_w=10.5, outline_w=LINE_W):
+    """Over-ear headphones in the AirPods-Max mould: a slim band and big oval
+    silver shells with a sage cushion on the side that meets the head."""
+    band = arc_pts(band_c[0], band_c[1], band_rx, band_ry, 180, 360, n=48)
+    stroke(d, band, band_w + outline_w * 1.2, LINE)
+    stroke(d, band, band_w, SILVER)
+    for k, (cx, cy) in enumerate(cups):
+        side = 1 if cx < band_c[0] else -1  # cushion faces the head
+        doodle(d, blob(cx, cy, cup_rx, cup_ry, 200 + k, jitter=0.018), SILVER, w=outline_w, off=2.6)
+        d.poly([(x + 1, y + 1) for x, y in blob(cx + side * cup_rx * 0.42, cy, cup_rx * 0.5, cup_ry * 0.78, 210 + k)],
+               fill=(176, 201, 163))
+        d.poly([(x + 1, y + 1) for x, y in blob(cx - side * cup_rx * 0.15, cy - cup_ry * 0.28, cup_rx * 0.2, cup_ry * 0.34, 220 + k)],
+               fill=(255, 255, 255))  # little glint on the metal
+
+
+def plush_face(d, cx, cy, spread, mouth_dy=20, cheek_dy=14):
+    """Miffy-style: tiny wide-set oval eyes and a small x for the nose/mouth."""
+    for sx in (-spread, spread):
+        d.ell(cx + sx, cy, 5.2, 7.6, fill=LINE)
+    stroke(d, [(cx - 5.5, cy + mouth_dy - 5.5), (cx + 5.5, cy + mouth_dy + 5.5)], 3.6)
+    stroke(d, [(cx + 5.5, cy + mouth_dy - 5.5), (cx - 5.5, cy + mouth_dy + 5.5)], 3.6)
+    layer, ld = d.overlay()
+    for sx in (-spread - 18, spread + 18):
+        ld.ellipse([(cx + sx - 14) * S, (cy + cheek_dy - 9) * S, (cx + sx + 14) * S, (cy + cheek_dy + 9) * S], fill=CHEEK[:3] + (150,))
+    d.commit(layer)
 
 
 def bunny():
+    """A plush bunny in big over-ear headphones, sitting up — hand-drawn."""
     W = H = 300
     d = D(W, H)
-    FUR, INNER = (253, 249, 241), (232, 202, 190)
-    # tall ears, tipped slightly apart, drawn before the head
-    for k, (ex, ang) in enumerate(((112, -9), (190, 10))):
-        pts = rot(blob(ex, 66, 21, 62, 70 + k, jitter=0.025), ang, ex, 100)
-        doodle(d, pts, FUR)
-        inner = rot(blob(ex, 70, 9.5, 46, 80 + k), ang, ex, 100)
-        d.poly([(x + 2, y + 3) for x, y in inner], fill=INNER)
-    # body, feet, arms
-    for k, fx in enumerate((118, 182)):
-        doodle(d, blob(fx, 286, 22, 12, 90 + k), FUR)
-    doodle(d, blob(150, 246, 52, 44, 92), FUR)
-    doodle(d, rot(blob(104, 240, 14, 24, 93), 20, 104, 240), FUR)
-    doodle(d, rot(blob(196, 240, 14, 24, 94), -20, 196, 240), FUR)
-    # head
-    doodle(d, blob(150, 152, 88, 70, 95, jitter=0.02), FUR)
-    # headphones in sage: band over the head, cups at the sides
-    band = arc_pts(150, 150, 96, 94, 196, 344, n=40)
-    stroke(d, band, 10.5, LINE)
-    stroke(d, band, 5.2, (176, 201, 163))
-    for k, cx in enumerate((58, 242)):
-        doodle(d, blob(cx, 160, 19, 28, 100 + k, jitter=0.02), (176, 201, 163), w=4.2)
-        d.poly([(x + 1, y + 1) for x, y in blob(cx, 160, 8, 15, 102 + k)], fill=(226, 236, 218))
-    face(d, 150, 156, 36)
-    # little music-note doodles
-    for nx, ny in ((256, 58), (36, 92)):
+    # band first (behind the ears), then ears, then body/head/cups on top
+    band_c, band_rx, band_ry = (150, 158), 100, 124
+    stroke(d, arc_pts(*band_c, band_rx, band_ry, 180, 360, n=48), 10.5 + LINE_W * 1.2, LINE)
+    stroke(d, arc_pts(*band_c, band_rx, band_ry, 180, 360, n=48), 10.5, SILVER)
+    for k, (ex, ang) in enumerate(((118, -12), (182, 12))):
+        pts = rot(blob(ex, 74, 26, 30, 70 + k, jitter=0.03), ang, ex, 100)
+        doodle(d, pts, PLUSH)
+        inner = rot(blob(ex, 78, 11, 17, 80 + k), ang, ex, 100)
+        d.poly([(x + 2, y + 3) for x, y in inner], fill=(238, 214, 204))
+    # sitting body: round feet out front, short arms
+    for k, fx in enumerate((112, 188)):
+        doodle(d, blob(fx, 282, 30, 19, 90 + k), PLUSH)
+    doodle(d, blob(150, 238, 60, 52, 92), PLUSH)
+    doodle(d, rot(blob(94, 238, 15, 30, 93), 26, 94, 238), PLUSH)
+    doodle(d, rot(blob(206, 238, 15, 30, 94), -26, 206, 238), PLUSH)
+    # head (wide and round, like the plush)
+    doodle(d, blob(150, 152, 86, 70, 95, jitter=0.018), PLUSH)
+    plush_face(d, 150, 150, 30)
+    # shells on top so they sit over the sides of the head
+    for k, (cx, cy) in enumerate(((58, 160), (242, 160))):
+        side = 1 if cx < 150 else -1
+        doodle(d, blob(cx, cy, 25, 38, 200 + k, jitter=0.018), SILVER, w=LINE_W, off=2.6)
+        d.poly([(x + 1, y + 1) for x, y in blob(cx + side * 11, cy, 12, 29, 210 + k)], fill=(176, 201, 163))
+        d.poly([(x + 1, y + 1) for x, y in blob(cx - side * 4, cy - 11, 5, 13, 220 + k)], fill=(255, 255, 255))
+    # a couple of little music notes
+    for nx, ny in ((262, 70), (36, 84)):
         stroke(d, [(nx, ny), (nx, ny - 26)], 3)
         stroke(d, [(nx, ny - 26), (nx + 12, ny - 20)], 3)
         d.poly([(x + 1, y + 1) for x, y in blob(nx - 4, ny + 1, 7, 5, int(nx))], fill=LINE)
-    tiny_sparkle(d, 270, 120, 9)
+    tiny_sparkle(d, 272, 150, 9)
     save(stickerize(d.img, border=6, border_color=(255, 250, 244)), 'bunny-headphones.png')
 
 
@@ -584,12 +590,57 @@ def paper_grain():
     img.save(os.path.join(OUT, 'paper-grain.png'), optimize=True)
 
 
+# ── favicon ──────────────────────────────────────────────────────────────────
+def favicon_master(rounded):
+    """The plush bunny's face + headphones on a sage tile, in 256-unit space.
+
+    Deliberately bolder and simpler than the sticker so it still reads at
+    16px: thick outlines and no fine detail. The master renders at 1024px and every
+    output size is a LANCZOS downscale.
+    """
+    d = D(256, 256)
+    tile = (200, 218, 188)
+    d.rrect(0, 0, 255.5, 255.5, 58 if rounded else 0, fill=tile)
+    W_, OFF = 11, 6
+    # band behind everything, then ears, head, shells
+    band = arc_pts(128, 152, 92, 118, 180, 360, n=48)
+    stroke(d, band, 20, LINE)
+    stroke(d, band, 10, SILVER)
+    for k, (ex, ang) in enumerate(((98, -12), (158, 12))):
+        pts = rot(blob(ex, 74, 24, 31, 70 + k, jitter=0.03), ang, ex, 106)
+        doodle(d, pts, PLUSH, w=W_, off=OFF)
+        d.poly([(x + 3, y + 4) for x, y in rot(blob(ex, 78, 10, 18, 80 + k), ang, ex, 106)], fill=(238, 214, 204))
+    doodle(d, blob(128, 156, 80, 70, 95, jitter=0.018), PLUSH, w=W_, off=OFF)
+    for sx in (-30, 30):
+        d.ell(128 + sx, 150, 7, 10, fill=LINE)
+    stroke(d, [(121, 174), (135, 188)], 5)
+    stroke(d, [(135, 174), (121, 188)], 5)
+    layer, ld = d.overlay()
+    for sx in (-52, 52):
+        ld.ellipse([(128 + sx - 14) * S, (176 - 9) * S, (128 + sx + 14) * S, (176 + 9) * S], fill=CHEEK[:3] + (150,))
+    d.commit(layer)
+    for k, cx in enumerate((40, 216)):
+        side = 1 if cx < 128 else -1
+        doodle(d, blob(cx, 158, 26, 42, 200 + k, jitter=0.018), SILVER, w=W_, off=OFF - 2)
+        d.poly([(x + 1, y + 1) for x, y in blob(cx + side * 11, 158, 12, 30, 210 + k)], fill=(176, 201, 163))
+    return d.img
+
+
+def favicon():
+    rounded = favicon_master(True)
+    square = favicon_master(False)
+    rounded.resize((512, 512), Image.LANCZOS).save(os.path.join(APP, 'icon.png'), optimize=True)
+    square.resize((180, 180), Image.LANCZOS).convert('RGB').save(os.path.join(APP, 'apple-icon.png'), optimize=True)
+    # .ico with real 16/32/48 frames, each downscaled from the master
+    rounded.resize((256, 256), Image.LANCZOS).save(
+        os.path.join(APP, 'favicon.ico'), format='ICO', sizes=[(16, 16), (32, 32), (48, 48)])
+
+
 def main():
     heart_glossy()
     sparkle('sparkle-sage.png', ROSE + (255,))
     star_pink()
     album_cloud()
-    teddy()
     bunny()
     flower_knob()
     tape('tape-gingham.png', (236, 243, 230), stripe=ROSE, stripe_alpha=120, gingham=True)
@@ -602,6 +653,7 @@ def main():
     folder('folder-bow.png', 'bow')
     pixel_art()
     paper_grain()
+    favicon()
     print('wrote', len(os.listdir(OUT)), 'files to', OUT)
 
 
