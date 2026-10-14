@@ -349,17 +349,9 @@ def tiny_sparkle(d, cx, cy, r):
     stroke(d, sparkle_points(cx, cy, r) + [sparkle_points(cx, cy, r)[0]], 2.4)
 
 
-PLUSH = (251, 244, 232)       # warm cream "terry cloth" fur
-PLUSH_SHADE = (222, 206, 188)  # the little fluff curls
+PLUSH = (251, 244, 232)       # warm cream fur (flat — no texture)
 SILVER = (206, 214, 207)       # headphone shells (cool silver with a hint of sage)
 SILVER_DK = (172, 184, 174)
-
-
-def curls(d, spots, r=5.5):
-    """Tiny 'c' scribbles — the plush's fluffy texture, in a doodle's shorthand."""
-    for k, (x, y) in enumerate(spots):
-        a0 = (k * 47) % 120 + 200
-        stroke(d, arc_pts(x, y, r, r, a0, a0 + 170, n=12), 2.4, PLUSH_SHADE)
 
 
 def headphones(d, band_c, band_rx, band_ry, cups, cup_rx, cup_ry, band_w=10.5, outline_w=LINE_W):
@@ -410,8 +402,6 @@ def bunny():
     doodle(d, rot(blob(206, 238, 15, 30, 94), -26, 206, 238), PLUSH)
     # head (wide and round, like the plush)
     doodle(d, blob(150, 152, 86, 70, 95, jitter=0.018), PLUSH)
-    curls(d, [(96, 120), (206, 124), (150, 96), (118, 100), (186, 100), (88, 168), (214, 170)])
-    curls(d, [(120, 232), (176, 246), (150, 214), (136, 262)], r=5)
     plush_face(d, 150, 150, 30)
     # shells on top so they sit over the sides of the head
     for k, (cx, cy) in enumerate(((58, 160), (242, 160))):
@@ -605,7 +595,7 @@ def favicon_master(rounded):
     """The plush bunny's face + headphones on a sage tile, in 256-unit space.
 
     Deliberately bolder and simpler than the sticker so it still reads at
-    16px: thick outlines, no fur curls. The master renders at 1024px and every
+    16px: thick outlines and no fine detail. The master renders at 1024px and every
     output size is a LANCZOS downscale.
     """
     d = D(256, 256)
