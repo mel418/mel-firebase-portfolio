@@ -1,47 +1,27 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { motion, useScroll, useSpring, useTransform } from 'motion/react';
 
 /**
  * Reading progress as a thin line with a little flower riding it, like the
- * slider on a music player. Real data (document scroll position), not a
- * prop-up: one passive scroll listener, rAF-throttled, writing a single CSS
- * variable — no React re-renders while scrolling. Decorative for assistive
- * tech (the page's own scroll position already conveys this natively).
+ * slider on a music player. Real data (document scroll position) run through a
+ * critically-damped spring so the flower glides instead of snapping to each
+ * scroll tick. Decorative for assistive tech (the page's own scroll position
+ * already conveys this natively).
  */
 export function ScrollProgress() {
-  const track = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const el = document.documentElement;
-      const max = el.scrollHeight - el.clientHeight;
-      const p = max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0;
-      track.current?.style.setProperty('--p', p.toFixed(4));
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 32, restDelta: 0.0005 });
+  const percent = useTransform(progress, [0, 1], ['0%', '100%']);
 
   return (
     <div aria-hidden="true" className="pointer-events-none sticky top-0 z-30 h-0 px-4 sm:px-8">
-      <div ref={track} className="relative top-3 h-[3px] rounded-full bg-primary/15">
-        <span className="absolute inset-y-0 left-0 rounded-full bg-primary/50" style={{ width: 'calc(var(--p, 0) * 100%)' }} />
-        <span className="absolute -top-[9px] -translate-x-1/2" style={{ left: 'calc(var(--p, 0) * 100%)' }}>
+      <div className="relative top-3 h-[3px] rounded-full bg-primary/15">
+        <motion.span className="absolute inset-y-0 left-0 rounded-full bg-primary/50" style={{ width: percent }} />
+        <motion.span className="absolute -top-[9px] -translate-x-1/2" style={{ left: percent }}>
           <Image src="/stickers/flower-knob.png" alt="" width={102} height={102} sizes="22px" className="h-[22px] w-[22px]" />
-        </span>
+        </motion.span>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Briefcase, Code2, GraduationCap, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { openProject } from '@/lib/open-project';
@@ -200,32 +201,50 @@ export function CareerTimeline({ entries }: { entries: TimelineEntry[] }) {
               ))}
 
               {/* Playhead */}
-              <div aria-hidden="true" className="pointer-events-none absolute bottom-0 z-20 w-px bg-primary/70 transition-[left] duration-500 ease-editorial" style={{ top: AXIS_H - 6, left: `${currentPlaced.anchor}%` }}>
+              <motion.div
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-0 z-20 w-px bg-primary/70"
+                style={{ top: AXIS_H - 6 }}
+                initial={false}
+                animate={{ left: `${currentPlaced.anchor}%` }}
+                transition={{ type: 'spring', visualDuration: 0.55, bounce: 0.12 }}
+              >
                 <span className="absolute -left-[3px] -top-[3px] h-[7px] w-[7px] rounded-full bg-primary" />
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
       </div>
 
-      <div key={current.id} className="hero-in min-h-[11rem] max-w-2xl space-y-4" style={{ ['--d' as string]: 0, animationDuration: '450ms' }}>
-        <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          <Icon className="h-3.5 w-3.5 text-primary" />
-          {KIND[current.kind].label}
-        </p>
-        <h3 className="font-headline text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">{current.title}</h3>
-        <p className="text-sm text-muted-foreground">{current.subtitle}</p>
-        <p className="text-base leading-relaxed text-foreground/80">{current.detail}</p>
-        {current.projectSlug && (
-          <button
-            type="button"
-            onClick={() => openProject(current.projectSlug!)}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/40 px-4 py-2 text-sm font-semibold text-accent-ink transition-colors hover:border-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <div className="min-h-[11rem] max-w-2xl">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={current.id}
+            className="space-y-4"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
           >
-            Open the album
-            <ArrowUpRight className="h-4 w-4" />
-          </button>
-        )}
+            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <Icon className="h-3.5 w-3.5 text-primary" />
+              {KIND[current.kind].label}
+            </p>
+            <h3 className="font-headline text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">{current.title}</h3>
+            <p className="text-sm text-muted-foreground">{current.subtitle}</p>
+            <p className="text-base leading-relaxed text-foreground/80">{current.detail}</p>
+            {current.projectSlug && (
+              <button
+                type="button"
+                onClick={() => openProject(current.projectSlug!)}
+                className="inline-flex items-center gap-2 rounded-full border border-primary/40 px-4 py-2 text-sm font-semibold text-accent-ink transition-colors hover:border-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                Open the album
+                <ArrowUpRight className="h-4 w-4" />
+              </button>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       <p className="text-xs text-muted-foreground">Pick a bar or dot, or step through with the arrow keys.</p>
@@ -260,22 +279,33 @@ export function CareerTimeline({ entries }: { entries: TimelineEntry[] }) {
                 {e.title}
               </span>
             </button>
-            {selected && (
-              <div className="hero-in mt-3 space-y-3" style={{ ['--d' as string]: 0, animationDuration: '400ms' }}>
-                <p className="text-sm text-muted-foreground">{e.subtitle}</p>
-                <p className="text-base leading-relaxed text-foreground/80">{e.detail}</p>
-                {e.projectSlug && (
-                  <button
-                    type="button"
-                    onClick={() => openProject(e.projectSlug!)}
-                    className="inline-flex items-center gap-2 rounded-full border border-primary/40 px-4 py-2 text-sm font-semibold text-accent-ink transition-colors hover:border-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    Open the album
-                    <ArrowUpRight className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            )}
+            <AnimatePresence initial={false}>
+              {selected && (
+                <motion.div
+                  key="detail"
+                  className="overflow-hidden"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ type: 'spring', visualDuration: 0.4, bounce: 0 }}
+                >
+                  <div className="mt-3 space-y-3">
+                    <p className="text-sm text-muted-foreground">{e.subtitle}</p>
+                    <p className="text-base leading-relaxed text-foreground/80">{e.detail}</p>
+                    {e.projectSlug && (
+                      <button
+                        type="button"
+                        onClick={() => openProject(e.projectSlug!)}
+                        className="inline-flex items-center gap-2 rounded-full border border-primary/40 px-4 py-2 text-sm font-semibold text-accent-ink transition-colors hover:border-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        Open the album
+                        <ArrowUpRight className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </li>
         );
       })}

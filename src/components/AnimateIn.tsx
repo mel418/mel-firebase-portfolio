@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { useReveal } from '@/lib/motion/useReveal';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView } from 'motion/react';
 
 type Props = {
   children: React.ReactNode;
@@ -11,32 +10,33 @@ type Props = {
   direction?: 'up' | 'left' | 'right' | 'none';
 };
 
+const OFFSET = {
+  up: { y: 24 },
+  left: { x: -24 },
+  right: { x: 24 },
+  none: {},
+};
+
 export function AnimateIn({ children, className, delay = 0, direction = 'up' }: Props) {
-  const { ref, isVisible } = useReveal<HTMLDivElement>();
+  const ref = useRef<HTMLDivElement>(null);
+  const isVisible = useInView(ref, { once: true, amount: 0.08 });
   // Applies the hidden state only after mount, so if JS fails to load
   // entirely, content is never stuck invisible — it's plain visible HTML.
   const [hasMounted, setHasMounted] = useState(false);
   useEffect(() => setHasMounted(true), []);
 
-  const directionClasses = {
-    up: 'translate-y-6 opacity-0',
-    left: '-translate-x-6 opacity-0',
-    right: 'translate-x-6 opacity-0',
-    none: 'opacity-0',
-  }[direction];
+  const hidden = hasMounted && !isVisible;
 
   return (
-    <div
+    <motion.div
       ref={ref}
       data-reveal
-      className={cn(
-        'transition-all duration-700 ease-out',
-        hasMounted && !isVisible ? directionClasses : 'translate-y-0 translate-x-0 opacity-100',
-        className
-      )}
-      style={{ transitionDelay: isVisible ? `${delay}ms` : '0ms' }}
+      className={className}
+      initial={false}
+      animate={hidden ? { opacity: 0, ...OFFSET[direction] } : { opacity: 1, x: 0, y: 0 }}
+      transition={hidden ? { duration: 0 } : { type: 'spring', visualDuration: 0.7, bounce: 0, delay: delay / 1000 }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }

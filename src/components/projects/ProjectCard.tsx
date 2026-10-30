@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
 import { ArrowUpRight, Play, Sparkles, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TrackNumber } from '@/components/primitives/TrackNumber';
@@ -19,24 +20,7 @@ type Props = {
 const FOCUS =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background';
 
-/** A few degrees of 3D lean toward the mouse plus a spotlight position. Mouse
- *  only (touch has no hover) and skipped under prefers-reduced-motion. */
-function tiltTo(e: React.PointerEvent<HTMLElement>) {
-  if (e.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const el = e.currentTarget;
-  const r = el.getBoundingClientRect();
-  const px = (e.clientX - r.left) / r.width;
-  const py = (e.clientY - r.top) / r.height;
-  el.style.setProperty('--rx', `${((0.5 - py) * 4).toFixed(2)}deg`);
-  el.style.setProperty('--ry', `${((px - 0.5) * 5).toFixed(2)}deg`);
-  el.style.setProperty('--mx', `${(px * 100).toFixed(1)}%`);
-  el.style.setProperty('--my', `${(py * 100).toFixed(1)}%`);
-}
-
-function tiltReset(e: React.PointerEvent<HTMLElement>) {
-  e.currentTarget.style.setProperty('--rx', '0deg');
-  e.currentTarget.style.setProperty('--ry', '0deg');
-}
+const TILT_SPRING = { stiffness: 220, damping: 22, mass: 0.6 };
 
 function LiveDot() {
   return (
@@ -54,52 +38,90 @@ function LiveDot() {
  * a single quiet line for the long tail.
  */
 export function ProjectCard({ project, isOpen, onOpen, variant = 'featured', flip = false }: Props) {
-  if (variant === 'row') {
-    return (
-      <button
-        type="button"
-        id={`card-${project.slug}`}
-        aria-haspopup="dialog"
-        onClick={() => onOpen(project.slug)}
-        className={cn(
-          'group grid w-full grid-cols-[1fr_auto] items-center gap-x-6 gap-y-1.5 py-7 text-left transition-colors sm:grid-cols-[8.5rem_1fr_auto]',
-          isOpen ? 'bg-primary/5' : 'hover:bg-primary/5',
-          FOCUS
-        )}
-      >
-        <TrackNumber n={project.year} className="col-span-2 sm:col-span-1" />
-        <div className="min-w-0 space-y-1.5">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <h3 className="font-headline text-lg font-bold tracking-tight transition-colors group-hover:text-accent-ink">{project.title}</h3>
-            {project.accolade && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                <Trophy className="h-3 w-3 text-primary" />
-                {project.accolade}
-              </span>
-            )}
-          </div>
-          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">{project.tagline}</p>
-        </div>
-        <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-      </button>
-    );
-  }
+  return variant === 'row' ? (
+    <RowCard project={project} isOpen={isOpen} onOpen={onOpen} />
+  ) : (
+    <FeaturedCard project={project} isOpen={isOpen} onOpen={onOpen} flip={flip} />
+  );
+}
 
+function RowCard({ project, isOpen, onOpen }: Omit<Props, 'variant' | 'flip'>) {
   return (
     <button
       type="button"
       id={`card-${project.slug}`}
       aria-haspopup="dialog"
       onClick={() => onOpen(project.slug)}
+      className={cn(
+        'group grid w-full grid-cols-[1fr_auto] items-center gap-x-6 gap-y-1.5 py-7 text-left transition-colors sm:grid-cols-[8.5rem_1fr_auto]',
+        isOpen ? 'bg-primary/5' : 'hover:bg-primary/5',
+        FOCUS
+      )}
+    >
+      <TrackNumber n={project.year} className="col-span-2 sm:col-span-1" />
+      <div className="min-w-0 space-y-1.5">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <h3 className="font-headline text-lg font-bold tracking-tight transition-colors group-hover:text-accent-ink">{project.title}</h3>
+          {project.accolade && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+              <Trophy className="h-3 w-3 text-primary" />
+              {project.accolade}
+            </span>
+          )}
+        </div>
+        <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">{project.tagline}</p>
+      </div>
+      <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-[color,transform] duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" />
+    </button>
+  );
+}
+
+function FeaturedCard({ project, isOpen, onOpen, flip }: Omit<Props, 'variant'>) {
+  const reduceMotion = useReducedMotion();
+  // Pointer position drives springs, so the lean eases toward the mouse and
+  // settles back instead of snapping.
+  const rx = useMotionValue(0);
+  const ry = useMotionValue(0);
+  const mx = useMotionValue(50);
+  const my = useMotionValue(50);
+  const rotateX = useSpring(rx, TILT_SPRING);
+  const rotateY = useSpring(ry, TILT_SPRING);
+  const spotlight = useMotionTemplate`radial-gradient(420px circle at ${mx}% ${my}%, hsl(var(--primary) / 0.12), transparent 65%)`;
+
+  // A few degrees of 3D lean toward the mouse plus a spotlight position.
+  // Mouse only (touch has no hover) and skipped under prefers-reduced-motion.
+  function tiltTo(e: React.PointerEvent<HTMLElement>) {
+    if (e.pointerType !== 'mouse' || reduceMotion) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    rx.set((0.5 - py) * 4);
+    ry.set((px - 0.5) * 5);
+    mx.set(px * 100);
+    my.set(py * 100);
+  }
+
+  function tiltReset() {
+    rx.set(0);
+    ry.set(0);
+  }
+
+  return (
+    <motion.button
+      type="button"
+      id={`card-${project.slug}`}
+      aria-haspopup="dialog"
+      onClick={() => onOpen(project.slug)}
       onPointerMove={tiltTo}
       onPointerLeave={tiltReset}
+      whileTap={{ scale: 0.99 }}
+      transition={{ type: 'spring', visualDuration: 0.25, bounce: 0.2 }}
       className={cn(
-        'group surface relative grid w-full overflow-hidden rounded-3xl text-left transition-[transform,border-color] duration-200 ease-out md:grid-cols-2',
-        '[transform:perspective(1100px)_rotateX(var(--rx,0deg))_rotateY(var(--ry,0deg))]',
+        'group surface relative grid w-full overflow-hidden rounded-3xl text-left transition-colors duration-200 ease-out md:grid-cols-2',
         isOpen ? 'border-primary/60' : 'hover:border-primary/50',
         FOCUS
       )}
-      style={{ ['--album-tint' as string]: project.tint }}
+      style={{ rotateX, rotateY, transformPerspective: 1100, ['--album-tint' as string]: project.tint }}
     >
       <div className={cn('relative aspect-[16/10] overflow-hidden md:aspect-auto md:min-h-[340px]', flip && 'md:order-2')}>
         {project.artwork ? (
@@ -152,11 +174,11 @@ export function ProjectCard({ project, isOpen, onOpen, variant = 'featured', fli
       </div>
 
       {/* Soft light that follows the pointer (set by tiltTo). */}
-      <span
+      <motion.span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{ background: 'radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), hsl(var(--primary) / 0.12), transparent 65%)' }}
+        style={{ background: spotlight }}
       />
-    </button>
+    </motion.button>
   );
 }

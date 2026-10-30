@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useId } from 'react';
+import { motion } from 'motion/react';
 import { Github, Library, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -69,34 +70,22 @@ function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
 
 function NavList() {
   const activeId = useActiveSection();
-  const containerRef = useRef<HTMLElement>(null);
-  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const [indicator, setIndicator] = useState<{ top: number; height: number } | null>(null);
-
-  useEffect(() => {
-    const row = rowRefs.current[activeId];
-    const container = containerRef.current;
-    if (!row || !container) return;
-    // Measured once per active-section change (not per frame) — the
-    // actual slide is a compositor-friendly `top` transition below, this
-    // just computes where it should land.
-    setIndicator({
-      top: row.offsetTop,
-      height: row.offsetHeight,
-    });
-  }, [activeId]);
+  // One shared layoutId: Motion slides the bar between rows with a spring,
+  // so there is nothing to measure by hand.
+  const indicatorId = useId();
 
   return (
-    <nav ref={containerRef} className="relative flex flex-col space-y-1">
-      {indicator && (
-        <span
-          aria-hidden="true"
-          className="absolute left-0 w-1 rounded-r-full bg-primary transition-[top,height] duration-base ease-track motion-ambient"
-          style={{ top: indicator.top, height: indicator.height }}
-        />
-      )}
+    <nav className="relative flex flex-col space-y-1">
       {navItems.map((item) => (
-        <div key={item.href} ref={(el) => { rowRefs.current[item.id] = el; }}>
+        <div key={item.href} className="relative">
+          {activeId === item.id && (
+            <motion.span
+              layoutId={indicatorId}
+              aria-hidden="true"
+              className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-primary"
+              transition={{ type: 'spring', visualDuration: 0.4, bounce: 0.15 }}
+            />
+          )}
           <NavItemRow item={item} isActive={activeId === item.id} />
         </div>
       ))}

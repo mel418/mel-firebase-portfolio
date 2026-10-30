@@ -3,6 +3,7 @@ import { Inter, Nunito, Caveat } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { MotionProvider } from '@/components/providers/MotionProvider';
 import { SkipLink } from '@/components/layout/SkipLink';
 import { site } from '@/content';
 import { cn } from '@/lib/utils';
@@ -52,8 +53,10 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <SkipLink />
         <ThemeProvider defaultTheme="system" storageKey="portfolio-theme">
-          {children}
-          <Toaster />
+          <MotionProvider>
+            {children}
+            <Toaster />
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>
