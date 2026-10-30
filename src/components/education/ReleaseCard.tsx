@@ -1,62 +1,54 @@
-import { Award, Users, GraduationCap } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Tape } from '@/components/scrapbook/Tape';
 import type { Education } from '@/content';
 
-function Field({ icon: Icon, label, children }: { icon: typeof Award; label: string; children: React.ReactNode }) {
-  return (
-    <div className="grid gap-2 sm:grid-cols-[140px_1fr] sm:gap-6">
-      <dt className="flex items-center gap-1.5 pt-0.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-        <Icon className="h-3.5 w-3.5 text-primary" />
-        {label}
-      </dt>
-      <dd>{children}</dd>
-    </div>
-  );
-}
-
-/** Education framed like a release card — the degree as the headline,
- *  graduation as a release date, coursework as a tracklist of chips
- *  rather than a prose sentence. */
+/** Education, framed like a release: the degree as the headline, the
+ *  transcript as the tracklist. */
 export function ReleaseCard({ education }: { education: Education }) {
   return (
-    <div className="paper-card relative rounded-[1.75rem] border-2 border-l-[6px] border-primary/30 border-l-primary/70 bg-card p-6 sm:p-8">
-      <Tape variant="beige" width={104} rotate={-5} className="-top-3 left-10" />
-      <div className="flex flex-col gap-1.5 border-b border-border/60 pb-6 mb-6 sm:flex-row sm:items-baseline sm:justify-between">
-        <div className="space-y-1.5">
-          <Eyebrow>Release</Eyebrow>
-          <h3 className="font-headline text-xl font-bold tracking-tight sm:text-2xl">{education.school}</h3>
-          <p className="text-sm font-medium text-accent-ink sm:text-base">
-            {education.degree} · GPA {education.gpa}
-          </p>
+    <div className="space-y-16">
+      <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-2">
+          <h3 className="font-headline text-2xl font-bold tracking-tight sm:text-3xl">{education.school}</h3>
+          <p className="text-base text-muted-foreground">{education.degree}</p>
+          <p className="text-sm text-muted-foreground">Graduated {education.graduated}</p>
         </div>
-        <p className="shrink-0 whitespace-nowrap text-xs text-muted-foreground sm:text-sm">
-          Released {education.graduated}
-        </p>
+        <div className="sm:text-right">
+          <p className="font-headline text-6xl font-extrabold leading-none tracking-tight text-accent-ink">{education.gpa}</p>
+          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">Cumulative GPA</p>
+        </div>
       </div>
 
-      <dl className="space-y-5">
-        <Field icon={GraduationCap} label="Coursework">
-          <div className="flex flex-wrap gap-2">
+      <div className="grid gap-14 sm:grid-cols-[1.5fr_1fr] sm:gap-16">
+        <div>
+          <Eyebrow>Coursework</Eyebrow>
+          <ul className="mt-6 divide-y divide-border">
             {education.coursework.map((course) => (
-              <Badge key={course} variant="secondary">{course}</Badge>
+              <li key={course} className="py-3 text-sm text-foreground/90">
+                {course}
+              </li>
             ))}
-          </div>
-        </Field>
+          </ul>
+        </div>
 
-        <Field icon={Award} label="Honors">
-          <p className="text-sm text-foreground/80 sm:text-base">{education.honors.join(' · ')}</p>
-        </Field>
-
-        <Field icon={Users} label="Affiliations">
-          <div className="flex flex-wrap gap-2">
-            {education.affiliations.map((a) => (
-              <Badge key={a} variant="secondary">{a}</Badge>
-            ))}
+        <div className="space-y-10">
+          <div>
+            <Eyebrow>Honors</Eyebrow>
+            <ul className="mt-6 space-y-2 text-sm text-foreground/90">
+              {education.honors.map((h) => (
+                <li key={h}>{h}</li>
+              ))}
+            </ul>
           </div>
-        </Field>
-      </dl>
+          <div>
+            <Eyebrow>Affiliations</Eyebrow>
+            <ul className="mt-6 space-y-2 text-sm text-foreground/90">
+              {education.affiliations.map((a) => (
+                <li key={a}>{a}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

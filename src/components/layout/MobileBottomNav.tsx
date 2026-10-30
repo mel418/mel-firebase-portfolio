@@ -12,7 +12,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center rounded-t-3xl border-t-2 border-dashed border-primary/30 bg-card paper-texture px-1"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center rounded-t-3xl border-t border-border bg-card px-1"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       {navTracks.map((item) => {

@@ -100,6 +100,20 @@ export type Education = {
   affiliations: string[];
 };
 
+export type Hackathon = {
+  name: string;
+  detail: string;
+  year: string;
+  /** Only set for a placement the resume states outright */
+  result?: string;
+};
+
+/** One labelled row of the skills section, in the resume's own grouping. */
+export type SkillGroup = {
+  label: string;
+  items: string[];
+};
+
 export type SiteIdentity = {
   name: string;
   /** Short professional title — "Software Engineer" — used in the status pill and page metadata, distinct from the rotating `roles` line */
@@ -107,6 +121,8 @@ export type SiteIdentity = {
   roles: string[];
   location: string;
   status: string;
+  /** One-sentence pitch under the name in the hero */
+  headline: string;
   bio: string;
   bioShort: string;
   email: string;
@@ -114,6 +130,8 @@ export type SiteIdentity = {
   avatar: Artwork;
   heroArtwork: Artwork;
   socials: SocialLink[];
+  /** At-a-glance proof points, each traceable to the resume or transcript */
+  highlights: { value: string; label: string; detail: string }[];
 };
 
 export type NavTrack = {

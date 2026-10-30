@@ -1,4 +1,20 @@
-import type { Skill } from './types';
+import type { Skill, SkillGroup } from './types';
+
+/**
+ * What the Skills section actually displays — the resume's own four groups,
+ * verbatim, plus the languages/tools from coursework that the resume leaves
+ * out. Plain strings on purpose: these are things Melody says she can do,
+ * while `skills` below is the typed index that project stacks reference.
+ */
+export const skillGroups: SkillGroup[] = [
+  { label: 'Languages', items: ['JavaScript', 'TypeScript', 'Python', 'SQL', 'HTML', 'CSS'] },
+  { label: 'Frameworks & libraries', items: ['React', 'Next.js', 'Node.js', 'Tailwind CSS', 'Recharts'] },
+  { label: 'Data & infrastructure', items: ['PostgreSQL (Supabase)', 'Firebase / Firestore', 'Git', 'Vercel', 'Row Level Security'] },
+  { label: 'APIs & platforms', items: ['Stripe', 'Plaid', 'Twilio', 'Claude API', 'OpenAI API', 'AWS (Bedrock, DynamoDB)', 'Google Maps API'] },
+];
+
+/** Coursework-level exposure, kept visibly secondary to the resume's groups. */
+export const alsoWorkedWith = ['Java', 'C++', 'C#', 'Kotlin', 'PHP', 'MySQL', 'MongoDB', 'Linux'];
 
 /**
  * Source of truth for every skill label referenced anywhere on the site —
@@ -72,4 +88,12 @@ export const skills: Skill[] = [
   { id: 'discord', name: 'Discord API', category: 'tools', iconSlug: 'discord', showInGrid: false },
   { id: 'spotify', name: 'Spotify API', category: 'tools', showInGrid: false },
   { id: 'vite', name: 'Vite', category: 'tools', iconSlug: 'vite', showInGrid: false },
+  { id: 'stripe', name: 'Stripe', category: 'tools', showInGrid: false },
+  { id: 'plaid', name: 'Plaid', category: 'tools', showInGrid: false },
+  { id: 'twilio', name: 'Twilio', category: 'tools', showInGrid: false },
+  { id: 'indexeddb', name: 'IndexedDB', category: 'data', showInGrid: false },
+  { id: 'bedrock', name: 'Amazon Bedrock', category: 'ai', showInGrid: false },
+  { id: 'strands', name: 'Strands Agents', category: 'ai', showInGrid: false },
+  { id: 'tavily', name: 'Tavily', category: 'tools', showInGrid: false },
+  { id: 'pywebview', name: 'pywebview', category: 'frameworks', showInGrid: false },
 ];

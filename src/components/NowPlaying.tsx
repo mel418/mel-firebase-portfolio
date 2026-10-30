@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { SiSpotify } from '@icons-pack/react-simple-icons';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tape } from '@/components/scrapbook/Tape';
 
 export type Song = {
   isPlaying: boolean;
@@ -73,8 +72,7 @@ export function NowPlaying({ song, variant = 'compact' }: Props) {
               allows, but never taller than the space available. */}
           <div className="max-h-[16.75rem] min-h-[6rem] flex-1 [container-type:size]">
           <div className="relative mx-auto aspect-square w-[min(100cqw,100cqh)]">
-            <Tape variant="gingham" width={96} rotate={-6} className="-top-3 left-6" />
-            <div className="relative h-full w-full overflow-hidden rounded-3xl border-2 border-primary/30 bg-muted shadow-lg">
+            <div className="relative h-full w-full overflow-hidden rounded-2xl bg-muted">
             {song?.albumImageUrl ? (
               <Image
                 src={song.albumImageUrl}

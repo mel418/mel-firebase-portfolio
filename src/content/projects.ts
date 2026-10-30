@@ -1,71 +1,27 @@
 import type { Project } from './types';
 
 /**
- * The discography. Ordered by trackNumber (chronological, earliest first) —
- * that's the ordering Phase 5's Discography component uses. `featured`
- * controls the separate featured-project slot the current gallery renders
- * up top and is independent of track order (PennySprout is the most recent
- * production work, not the earliest, and stays featured).
+ * The discography. Array order is DISPLAY order, strongest first: the three
+ * `featured` projects render as full-width cards, everything after them as a
+ * plain list. `trackNumber` is still chronological (earliest = 1).
  *
- * Tagline/description text for the six pre-existing projects is preserved
- * verbatim from the current site — untouched in this phase. Ser Tibbles and
- * CECS-327 are newly drafted in the same voice; both are placeholder-depth
- * until Phase 5's liner notes go deeper.
+ * PennySprout, Matcha Order Kiosk and Cafinity use the resume's wording
+ * (Melody_Gatan_Resume.pdf) so site and resume agree. Sales Scout and Cozy
+ * Disk Diary come from their public GitHub READMEs.
  *
- * `artwork` is optional — CECS-327 has no screenshot and no top-level
- * README in its repo, so it has none. `tint` is present on every project
- * regardless, so even an artwork-less card still carries project-specific
- * color (Phase 5's text-forward card variant).
+ * `artwork` is optional — projects without a screenshot render via the
+ * text-forward card variant. `tint` is present on every project regardless.
+ *
+ * Link caveat: github.com/mel418/PennySprout-v1 and the Matcha kiosk repo are
+ * PRIVATE on GitHub, so those "Code" links 404 for anyone but Melody.
  */
 export const projects: Project[] = [
-  {
-    slug: 'ser-tibbles',
-    trackNumber: 1,
-    title: 'Ser Tibbles',
-    tagline: 'A Discord bot that recommends new music by genre or Spotify link — built in one hackathon all-nighter.',
-    description: "Built with a teammate for MarinaHacks: a Discord bot using the Spotify API (via Spotipy) to generate five song recommendations from a genre or a Spotify track/artist URL, authenticated through Spotify's client-credentials flow.",
-    year: 'Apr 2023',
-    role: 'Full-Stack Developer · Team of 2',
-    artwork: {
-      src: '/serTibbles.png',
-      alt: 'Ser Tibbles Discord music recommendation bot',
-      width: 1137,
-      height: 728,
-      tint: '235 30% 55%',
-    },
-    tint: '235 30% 55%',
-    stack: ['python', 'discord', 'spotify'],
-    links: [
-      { type: 'devpost', href: 'https://devpost.com/software/discord-music-rec-bot-ser-tibbles' },
-      { type: 'github', href: 'https://github.com/mel418/Discord-Music-Rec-Bot' },
-    ],
-    accolade: 'MarinaHacks 2023 · 2nd Place',
-  },
-  {
-    slug: 'cafinity',
-    trackNumber: 2,
-    title: 'Cafinity',
-    tagline: 'Discover cafes nearby, with AI auto-moderating every community submission.',
-    description: 'A cafe discovery platform that cut manual review across 200+ listings with an OpenAI moderation pipeline, and surfaces nearby spots using Google Maps clustering with Haversine distance filtering.',
-    year: 'Jan – May 2025',
-    role: 'Full-Stack Developer · Team of 5',
-    artwork: {
-      src: '/cafinity.png',
-      alt: 'Cafinity cafe discovery app',
-      width: 1904,
-      height: 918,
-      tint: '25 35% 40%',
-    },
-    tint: '25 35% 40%',
-    stack: ['react', 'vite', 'firebase', 'googlemaps', 'openai', 'tailwind', 'python'],
-    links: [{ type: 'github', href: 'https://github.com/mel418/cafinity' }],
-  },
   {
     slug: 'pennysprout',
     trackNumber: 3,
     title: 'PennySprout',
-    tagline: 'Turns a messy bank-statement CSV into clear spending insights and a 1–10 financial health score.',
-    description: "A full-stack finance analyzer that parses uploaded statements, routes transactions through the Claude API for categorization, and renders interactive breakdowns with Recharts — backed by Clerk auth and per-user CRUD for persistent data.",
+    tagline: 'A finance app where Claude reads your bank statements and turns them into a health score and cash-flow charts.',
+    description: "Claude reads PDF bank statements (no OCR) and CSV uploads to produce a financial health score and cash-flow charts, with Plaid bank linking that handles the OAuth redirect banks require in production. Financial data is protected in layers: Row Level Security on every Postgres table, a server-only key tied to the signed-in user, and personal details stripped before storage.",
     year: 'Jun 2025 – Present',
     role: 'Full-Stack Developer · Solo',
     artwork: {
@@ -76,7 +32,7 @@ export const projects: Project[] = [
       tint: '100 30% 45%',
     },
     tint: '100 30% 45%',
-    stack: ['nextjs', 'ts', 'claude', 'supabase', 'clerk', 'recharts', 'tailwind'],
+    stack: ['nextjs', 'ts', 'claude', 'supabase', 'stripe', 'plaid', 'clerk', 'recharts', 'tailwind'],
     links: [
       { type: 'live', href: 'https://www.pennysprout.online/' },
       { type: 'github', href: 'https://github.com/mel418/PennySprout-v1' },
@@ -85,8 +41,64 @@ export const projects: Project[] = [
     status: 'live',
   },
   {
-    slug: 'rift-rewind',
+    slug: 'modo-matcha',
     trackNumber: 4,
+    title: 'Matcha Order Kiosk',
+    tagline: 'A real-time ordering system that handled 200+ orders at a corporate event, and kept working when the venue Wi-Fi dropped.',
+    description: 'A guest menu and live barista queue, first built on Next.js and Firestore and run at a corporate event. Re-architected in 2026 on Supabase Realtime with a guest kiosk, barista queue and admin panel, migrating the 2025 event data. The kiosk is offline-first with IndexedDB so guests can keep ordering without Wi-Fi, order-ready texts go out through Twilio, and it was load tested before the event.',
+    year: 'Jul 2025 – Present',
+    role: 'Product Lead & Developer · Solo',
+    artwork: {
+      src: '/Modo Matcha menu.webp',
+      alt: 'Matcha Order Kiosk guest menu',
+      width: 1919,
+      height: 912,
+      tint: '90 35% 38%',
+    },
+    tint: '90 35% 38%',
+    stack: ['nextjs', 'ts', 'supabase', 'firebase', 'indexeddb', 'twilio'],
+    links: [
+      { type: 'live', href: 'https://modomatcha.com' },
+      { type: 'github', href: 'https://github.com/mel418/modo-matcha-order-system' },
+    ],
+    featured: true,
+    status: 'live',
+  },
+  {
+    slug: 'cafinity',
+    trackNumber: 2,
+    title: 'Cafinity',
+    tagline: 'Cafe discovery with map search, amenity filters and AI-moderated reviews. Our senior capstone, built by a team of five.',
+    description: 'Built for CECS 491A/B. I developed the notification system and the admin dashboard (with pagination to keep it responsive), restructured reviews from one flat Firestore collection into subcollections, and built a multi-criteria search filter that queries Firestore directly. Firebase Auth handles email verification, password reset and role-based access.',
+    year: 'Jan – May 2025',
+    role: 'Full-Stack Developer · Team of 5',
+    artwork: {
+      src: '/cafinity.png',
+      alt: 'Cafinity cafe discovery app',
+      width: 1904,
+      height: 918,
+      tint: '25 35% 40%',
+    },
+    tint: '25 35% 40%',
+    stack: ['react', 'vite', 'firebase', 'googlemaps', 'openai', 'tailwind'],
+    links: [{ type: 'github', href: 'https://github.com/mel418/cafinity' }],
+    featured: true,
+  },
+  {
+    slug: 'modo-matcha-sales-scout',
+    trackNumber: 9,
+    title: 'Modo Matcha Sales Scout',
+    tagline: 'An AI agent that finds a real local company with a live event signal, scores the fit, and drafts the outreach email.',
+    description: "Built for the AWS Agents for Humans hackathon on the Strands Agents SDK and Amazon Bedrock. The agent researches with live web search, verifies its signal against a real source URL instead of inventing a company, scores the fit against the business's actual services and lead times, and drafts a first-touch email. The core agent loop is built and tested against real search results; the full multi-agent production design is written up in the repo's SPEC.",
+    year: 'Sep 2026',
+    role: 'Developer · AWS Agents for Humans 2026',
+    tint: '28 45% 45%',
+    stack: ['python', 'strands', 'bedrock', 'claude', 'tavily'],
+    links: [{ type: 'github', href: 'https://github.com/mel418/modo-matcha-sales-scout' }],
+  },
+  {
+    slug: 'rift-rewind',
+    trackNumber: 5,
     title: 'Rift Rewind',
     tagline: 'Spotify Wrapped, but for League of Legends — AI-coached season recaps delivered in Discord.',
     description: 'Pulls a full season of Riot match history, aggregates win rate, KDA, and champion stats, then generates personalized coaching via Claude on AWS Bedrock — with DynamoDB caching to stay under Riot API rate limits.',
@@ -105,8 +117,39 @@ export const projects: Project[] = [
     accolade: 'Riot Hackathon 2025',
   },
   {
+    slug: 'f1gpt',
+    trackNumber: 8,
+    title: 'F1GPT',
+    tagline: 'Ask anything about Formula 1 and get real-time answers grounded in live F1 data.',
+    description: 'A RAG chatbot that scrapes Wikipedia and the official F1 site, stores vector embeddings in DataStax Astra DB, and streams GPT-4o responses through a LangChain retrieval pipeline.',
+    year: 'May 2026',
+    role: 'Full-Stack Developer · Solo',
+    artwork: {
+      src: '/f1gpt.png',
+      alt: 'F1GPT Formula 1 RAG chatbot',
+      width: 1919,
+      height: 914,
+      tint: '355 55% 42%',
+    },
+    tint: '355 55% 42%',
+    stack: ['nextjs', 'ts', 'openai', 'langchain', 'astradb', 'vercelai', 'puppeteer', 'tailwind'],
+    links: [{ type: 'github', href: 'https://github.com/mel418/nextjs-f1gpt' }],
+  },
+  {
+    slug: 'cozy-disk-diary',
+    trackNumber: 10,
+    title: 'Cozy Disk Diary',
+    tagline: 'A pastel, look-only disk space explorer for Windows, shipped as a one-click installer.',
+    description: 'Shows what each folder contains, how much space it takes, and a diary of what changed between scans. It never deletes or modifies anything. A Python scanner and a tiny local web server drive an HTML/JS interface in a pywebview desktop window, packaged with PyInstaller and Inno Setup.',
+    year: 'Oct 2026',
+    role: 'Developer · Solo',
+    tint: '150 25% 42%',
+    stack: ['python', 'pywebview', 'html', 'css', 'js'],
+    links: [{ type: 'github', href: 'https://github.com/mel418/cozy-disk-diary' }],
+  },
+  {
     slug: 'animals10-classifier',
-    trackNumber: 5,
+    trackNumber: 7,
     title: 'Animals10 Classifier',
     tagline: '85% accuracy across 10 animal species with a VGG16 CNN built from scratch.',
     description: 'Implemented VGG16 from scratch in PyTorch with batch normalization, dropout, and cosine-annealing LR scheduling over 15 epochs — outperforming a ResNet50 baseline that overfit at comparable depth.',
@@ -131,52 +174,31 @@ export const projects: Project[] = [
     description: "Two Docker-based systems programming labs for CSULB's Distributed Computing course: a containerized client/server file-transfer app, and a from-scratch implementation of multicast and anycast group messaging over raw sockets, each documented in a full technical report.",
     year: 'Sep – Dec 2025',
     role: 'Systems Engineer',
-    // No artwork — the repo has no screenshot or top-level README. Renders
-    // via Phase 5's text-forward card variant instead of a placeholder image.
     tint: '210 25% 42%',
     stack: ['python', 'docker'],
     links: [{ type: 'github', href: 'https://github.com/mel418/CECS-327' }],
   },
   {
-    slug: 'f1gpt',
-    trackNumber: 7,
-    title: 'F1GPT',
-    tagline: 'Ask anything about Formula 1 and get real-time answers grounded in live F1 data.',
-    description: 'A RAG chatbot that scrapes Wikipedia and the official F1 site, stores vector embeddings in DataStax Astra DB, and streams GPT-4o responses through a LangChain retrieval pipeline.',
-    year: 'May 2026',
-    role: 'Full-Stack Developer · Solo',
+    slug: 'ser-tibbles',
+    trackNumber: 1,
+    title: 'Ser Tibbles',
+    tagline: 'A Discord bot that recommends new music by genre or Spotify link — built in one hackathon all-nighter.',
+    description: "Built with a teammate for MarinaHacks: a Discord bot using the Spotify API (via Spotipy) to generate five song recommendations from a genre or a Spotify track/artist URL, authenticated through Spotify's client-credentials flow.",
+    year: 'Apr 2023',
+    role: 'Full-Stack Developer · Team of 2',
     artwork: {
-      src: '/f1gpt.png',
-      alt: 'F1GPT Formula 1 RAG chatbot',
-      width: 1919,
-      height: 914,
-      tint: '355 55% 42%',
+      src: '/serTibbles.png',
+      alt: 'Ser Tibbles Discord music recommendation bot',
+      width: 1137,
+      height: 728,
+      tint: '235 30% 55%',
     },
-    tint: '355 55% 42%',
-    stack: ['nextjs', 'ts', 'openai', 'langchain', 'astradb', 'vercelai', 'puppeteer', 'tailwind'],
-    links: [{ type: 'github', href: 'https://github.com/mel418/nextjs-f1gpt' }],
-  },
-  {
-    slug: 'modo-matcha',
-    trackNumber: 8,
-    title: 'Modo Matcha',
-    tagline: 'Real-time drink ordering that served 200+ guests with zero fulfillment errors.',
-    description: 'A live-event ordering system with synchronized customer- and kitchen-facing screens. I scoped the product, directed the build, and validated Firestore real-time sync end-to-end before deploying for a catering event.',
-    year: 'Jul 2026',
-    role: 'Product Lead & Developer · Solo',
-    artwork: {
-      src: '/Modo Matcha menu.webp',
-      alt: 'Modo Matcha live ordering system',
-      width: 1919,
-      height: 912,
-      tint: '90 35% 38%',
-    },
-    tint: '90 35% 38%',
-    stack: ['ts', 'firebase'],
+    tint: '235 30% 55%',
+    stack: ['python', 'discord', 'spotify'],
     links: [
-      { type: 'live', href: 'https://modomatcha.com' },
-      { type: 'github', href: 'https://github.com/mel418/modo-matcha-order-system' },
+      { type: 'devpost', href: 'https://devpost.com/software/discord-music-rec-bot-ser-tibbles' },
+      { type: 'github', href: 'https://github.com/mel418/Discord-Music-Rec-Bot' },
     ],
-    status: 'live',
+    accolade: 'MarinaHacks 2023 · 2nd Place',
   },
 ];

@@ -4,8 +4,6 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Grain } from '@/components/primitives/Grain';
-import { CustomCursor } from '@/components/primitives/CustomCursor';
 import { MagneticWrap } from '@/components/primitives/MagneticWrap';
 
 type Props = {
@@ -26,12 +24,10 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           otherwise scale against that full height instead of the
           viewport. */}
       <div className="app-backdrop fixed inset-0 -z-10" aria-hidden="true" />
-      <Grain />
-      <CustomCursor />
 
       {/* Left library rail — visible md+, pinned via sticky rather than
           relying on a viewport-height ancestor with overflow-hidden. */}
-      <div className="hidden md:flex flex-col w-rail shrink-0 sticky top-0 h-dvh paper-texture bg-card/80 backdrop-blur-xl border-r-2 border-dashed border-primary/25 overflow-y-auto scrollbar-hide">
+      <div className="hidden md:flex flex-col w-rail shrink-0 sticky top-0 h-dvh bg-card/80 backdrop-blur-xl border-r border-border overflow-y-auto scrollbar-hide">
         {leftPanel}
       </div>
 
@@ -60,8 +56,8 @@ export function SpotifyShell({ leftPanel, rightPanel, children }: Props) {
           // deliberately positioned outside this box on the left; clipping
           // this element would cut the button off. The content div further
           // down carries its own overflow-hidden instead.)
-          'hidden xl:flex h-dvh min-w-0 shrink-0 self-start sticky top-0 paper-texture bg-card/80 backdrop-blur-xl transition-all duration-300 ease-in-out',
-          rightOpen ? 'w-panel border-l-2 border-dashed border-primary/25' : 'w-0'
+          'hidden xl:flex h-dvh min-w-0 shrink-0 self-start sticky top-0 bg-card/80 backdrop-blur-xl transition-all duration-300 ease-in-out',
+          rightOpen ? 'w-panel border-l border-border' : 'w-0'
         )}
       >
         {/* Toggle button — sits on the left edge of the panel. -left-6 is

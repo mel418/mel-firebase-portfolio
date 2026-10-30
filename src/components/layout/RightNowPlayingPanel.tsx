@@ -2,16 +2,13 @@
 
 import Image from 'next/image';
 import { Github, Linkedin, Mail } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { NowPlaying, type Song } from '@/components/NowPlaying';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { site, education } from '@/content';
+import { site } from '@/content';
 import { NowViewing } from '@/components/layout/NowViewing';
 import { ErrorBoundary } from '@/components/primitives/ErrorBoundary';
-import { Tape } from '@/components/scrapbook/Tape';
-import { Sticker } from '@/components/scrapbook/Sticker';
 
 const githubHref = site.socials.find((s) => s.type === 'github')!.href;
 const linkedinHref = site.socials.find((s) => s.type === 'linkedin')!.href;
@@ -56,10 +53,7 @@ export function RightNowPlayingPanel({ song }: Props) {
         <div className="flex shrink-0 flex-col gap-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">About the artist</p>
 
-          <div className="relative">
-          <Tape variant="beige" width={84} rotate={5} className="-top-3 right-8" />
-          <Sticker name="sparkle" size={22} className="-left-2 -top-3" float />
-          <div className="relative aspect-[16/8] w-full rounded-3xl overflow-hidden border-2 border-primary/30 shadow-md">
+          <div className="relative aspect-[16/8] w-full overflow-hidden rounded-2xl">
             <Image
               src={site.heroArtwork.src}
               alt={site.heroArtwork.alt}
@@ -76,26 +70,12 @@ export function RightNowPlayingPanel({ song }: Props) {
               <p className="text-white font-extrabold font-headline text-lg leading-tight tracking-tight">{site.name}</p>
             </div>
           </div>
-          </div>
 
-          {/* Secondary copy: hidden on screens shorter than 940px so the panel
-              always fits without scrolling. The name, photo, and links stay. */}
-          <div className="flex flex-col gap-3 [@media(max-height:940px)]:hidden">
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          {/* One line of context; hidden on screens shorter than 940px so the
+              panel always fits without scrolling. */}
+          <p className="text-sm leading-relaxed text-muted-foreground [@media(max-height:940px)]:hidden">
             {site.bioShort}
           </p>
-
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="text-xs border-primary/40 text-primary">{education.shortLabel}</Badge>
-            <Badge variant="outline" className="text-xs border-primary/40 text-primary">GPA {education.gpa}</Badge>
-            <Badge variant="outline" className="text-xs">{site.location}</Badge>
-            <Badge variant="outline" className="text-xs">{site.status}</Badge>
-          </div>
-
-          <div className="flex flex-wrap gap-1.5">
-            <span className="text-xs text-muted-foreground">{education.affiliations.map((a) => a.split(' — ')[0]).join(' · ')}</span>
-          </div>
-          </div>
         </div>
 
         <Separator />
