@@ -96,15 +96,39 @@ export const linerNotes: Record<string, LinerNotes> = {
     ],
   },
   'modo-matcha': {
-    built: 'A live-event ordering system with synchronized customer- and kitchen-facing screens, built on Firebase/Firestore real-time sync, deployed for an actual catering event serving 200+ guests with zero fulfillment errors.',
+    built: 'A real-time ordering system: a guest menu and kiosk, a live barista queue and an admin panel. The 2025 version ran on Next.js and Firestore at a corporate event and handled 200+ orders; the 2026 re-architecture moved it to Supabase Realtime and migrated the event data.',
     why: 'Watched a matcha pop-up run entirely on shouted orders and sticky notes and figured the kitchen and the counter needed to see the same queue, live, without either side re-entering anything.',
     challenges: [
-      'Validating Firestore real-time sync end-to-end before a live event with no second chance — any desync between the customer and kitchen screens would have meant lost or duplicated orders in front of a real line.',
-      'Scoping the product and directing the build myself while keeping the UI simple enough for kitchen staff to use under real service pressure, not just in a demo.',
+      'Event venues have unreliable Wi-Fi, so the kiosk is offline-first with IndexedDB (Dexie): guests keep ordering and orders sync once the connection returns.',
+      'Load testing before the event, since there was no second chance once a real line formed.',
+      'Texting guests when their order is ready through Twilio while handling phone numbers privately.',
     ],
     learned: [
-      "The gap between 'works in dev' and 'works live in front of a paying line' is mostly about testing failure paths, not the happy path.",
+      "The gap between 'works in dev' and 'works live in front of a line' is mostly about testing failure paths, not the happy path.",
       'Owning a product end-to-end — scope, build, and the actual event — is a different skill set than just being handed a spec.',
+    ],
+  },
+  'modo-matcha-sales-scout': {
+    built: 'A Strands Agents SDK agent on Amazon Bedrock that researches with live Tavily web search, finds a real Los Angeles / Orange County company with a live event signal, verifies it against a source URL, scores the fit and drafts a first-touch email. It runs as two agents: a research agent, then a structuring agent that returns the scored pitch.',
+    why: "A small catering business books events mostly through inbound referrals. The expensive part of outbound is deciding whether a lead is worth emailing, so the agent does the research and hands back a finished pitch to approve.",
+    challenges: [
+      'Making the agent verify each signal against a real URL instead of inventing a plausible company.',
+      'Encoding real constraints, like the lead time for a branded cart, so a drafted email never promises something the business cannot deliver.',
+    ],
+    learned: [
+      'Python should own control flow and the model should own judgment. The repo documents that reasoning and a five-agent production design in SPEC.md.',
+      'Being clear about what is built (the core agent loop) versus what is designed (AgentCore deployment, DynamoDB lead tracking) is part of shipping honestly.',
+    ],
+  },
+  'cozy-disk-diary': {
+    built: 'A Windows desktop app: a Python scanner and a small local web server drive an HTML/CSS/JS interface inside a pywebview window, with light and dark mode. It is packaged with PyInstaller and an Inno Setup installer.',
+    why: 'Disk-space tools are usually either intimidating or one click away from deleting something. This one is deliberately look-only, and keeps a diary of what changed between scans.',
+    challenges: [
+      'Shipping a real installer: bundling the Python runtime, the web UI and the icon so it installs like any other app.',
+      'Keeping the app strictly read-only, with scan history stored only on the user’s own computer.',
+    ],
+    learned: [
+      'How a desktop app is built and distributed end to end, not just run from source.',
     ],
   },
 };

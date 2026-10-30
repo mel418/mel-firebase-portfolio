@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { useActiveSection, setActiveSectionImmediate } from '@/hooks/use-active-section';
 import { navTracks, site, type NavTrack } from '@/content';
 import { navIconRegistry } from '@/lib/icons';
+import { SectionKnob } from '@/components/props/SectionKnob';
 
 type NavItem = NavTrack;
 
@@ -86,7 +87,7 @@ function NavList() {
   }, [activeId]);
 
   return (
-    <nav ref={containerRef} className="relative flex flex-col space-y-1 flex-1">
+    <nav ref={containerRef} className="relative flex flex-col space-y-1">
       {indicator && (
         <span
           aria-hidden="true"
@@ -113,7 +114,13 @@ export function AppSidebar() {
 
       <NavList />
 
-      <div className="space-y-2 pt-3 border-t-2 border-dashed border-primary/25">
+      {/* The empty middle of the rail: a dial that mirrors and drives the list
+          above. Hidden on short screens so the rail never has to scroll. */}
+      <div className="flex min-h-0 flex-1 items-center justify-center [@media(max-height:720px)]:hidden">
+        <SectionKnob />
+      </div>
+
+      <div className="space-y-2 pt-4 border-t border-border">
         {/* asChild renders a single <a> carrying the Button's styles,
             instead of nesting a <button> inside an <a> — invalid HTML
             (interactive content can't nest) that also creates two

@@ -5,6 +5,7 @@ import { ProjectCard } from './ProjectCard';
 import { ProjectDetail } from './ProjectDetail';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AnimateIn } from '@/components/AnimateIn';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
 import type { Project } from '@/content';
 
 type Props = {
@@ -96,23 +97,28 @@ export function Discography({ projects, initialTrack }: Props) {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  const featured = projects.find((p) => p.featured);
-  const rest = projects.filter((p) => p !== featured);
+  const featured = projects.filter((p) => p.featured);
+  const rest = projects.filter((p) => !p.featured);
 
   return (
-    <div className="space-y-6">
-      {featured && (
-        <AnimateIn>
-          <ProjectCard project={featured} variant="featured" tiltDir={-1} isOpen={openSlug === featured.slug} onOpen={open} />
-        </AnimateIn>
-      )}
-
-      <div className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
-        {rest.map((project, i) => (
-          <AnimateIn key={project.slug} delay={i * 60}>
-            <ProjectCard project={project} tiltDir={i % 2 === 0 ? 1 : -1} isOpen={openSlug === project.slug} onOpen={open} />
+    <div>
+      <div className="space-y-10 sm:space-y-14">
+        {featured.map((project, i) => (
+          <AnimateIn key={project.slug}>
+            <ProjectCard project={project} flip={i % 2 === 1} isOpen={openSlug === project.slug} onOpen={open} />
           </AnimateIn>
         ))}
+      </div>
+
+      <div className="mt-28">
+        <AnimateIn>
+          <Eyebrow>More projects</Eyebrow>
+          <div className="mt-8 divide-y divide-border border-y border-border">
+            {rest.map((project) => (
+              <ProjectCard key={project.slug} project={project} variant="row" isOpen={openSlug === project.slug} onOpen={open} />
+            ))}
+          </div>
+        </AnimateIn>
       </div>
 
       <Dialog open={!!openProject} onOpenChange={(isOpen) => { if (!isOpen) close(); }}>

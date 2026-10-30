@@ -1,38 +1,33 @@
 import type { ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
 import { AnimateIn } from './AnimateIn';
 import { Eyebrow } from './primitives/Eyebrow';
 
 type SectionProps = {
   id: string;
   title: string;
-  icon: LucideIcon;
-  children: React.ReactNode;
+  children: ReactNode;
   eyebrow?: string;
-  hideHeader?: boolean;
-  /** Decorative stickers for the header's right side (aria-hidden art only). */
-  decoration?: ReactNode;
+  /** One quiet sentence under the title. */
+  description?: string;
 };
 
-export function Section({ id, title, icon: Icon, children, eyebrow, hideHeader = false, decoration }: SectionProps) {
+/** Every section shares one narrow column and the same generous vertical
+ *  rhythm — the whitespace *is* the layout, so there are no dividers. */
+export function Section({ id, title, children, eyebrow, description }: SectionProps) {
   return (
-    <section id={id} className="scroll-mt-24 px-4 sm:px-8 py-12 sm:py-16">
-      {!hideHeader && (
+    <section id={id} className="scroll-mt-8 py-24 sm:py-32">
+      <div className="mx-auto w-full max-w-4xl px-6 sm:px-10">
         <AnimateIn>
-          <header className="relative mb-10">
-            <div className="flex items-center gap-2.5 mb-3">
-              <Icon className="w-4 h-4 text-primary shrink-0" />
-              <Eyebrow>{eyebrow ?? title}</Eyebrow>
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-extrabold font-headline tracking-tight leading-[1.05]">
-              {title}
-            </h2>
-            {decoration}
-            <div aria-hidden="true" className="gingham mt-5 h-2.5 w-full rounded-full [mask-image:linear-gradient(90deg,#000_55%,transparent)]" />
+          <header className="mb-14 sm:mb-16">
+            <Eyebrow>{eyebrow ?? title}</Eyebrow>
+            <h2 className="mt-4 font-headline text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl">{title}</h2>
+            {description && (
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
+            )}
           </header>
         </AnimateIn>
-      )}
-      {children}
+        {children}
+      </div>
     </section>
   );
 }
