@@ -62,6 +62,8 @@ export type Project = {
   accolade?: string;
   featured?: boolean;
   status?: ProjectStatus;
+  /** Has an in-dialog sandbox (sample data only) — which one to render */
+  demo?: 'kiosk' | 'finance';
 };
 
 export type LinerNotes = {
@@ -100,14 +102,6 @@ export type Education = {
   affiliations: string[];
 };
 
-export type Hackathon = {
-  name: string;
-  detail: string;
-  year: string;
-  /** Only set for a placement the resume states outright */
-  result?: string;
-};
-
 /** One labelled row of the skills section, in the resume's own grouping. */
 export type SkillGroup = {
   label: string;
@@ -144,4 +138,23 @@ export type NavTrack = {
   /** lucide-react icon name, resolved by the icon registry — never a component reference */
   iconName: string;
   href: string;
+};
+
+export type TimelineKind = 'work' | 'project' | 'school' | 'hackathon';
+
+/** One item on the career timeline. Bars have an `end`; a point in time doesn't. */
+export type TimelineEntry = {
+  id: string;
+  kind: TimelineKind;
+  /** ISO 'YYYY-MM' */
+  start: string;
+  /** ISO 'YYYY-MM' or 'present'; omit for a single moment (a hackathon) */
+  end?: string;
+  /** Very short label drawn on the bar or beside the dot */
+  short: string;
+  title: string;
+  subtitle: string;
+  detail: string;
+  /** If set, the entry offers to open that project's album */
+  projectSlug?: string;
 };

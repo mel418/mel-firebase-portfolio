@@ -6,6 +6,7 @@ import { ProjectDetail } from './ProjectDetail';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AnimateIn } from '@/components/AnimateIn';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { OPEN_PROJECT_EVENT } from '@/lib/open-project';
 import type { Project } from '@/content';
 
 type Props = {
@@ -67,6 +68,16 @@ export function Discography({ projects, initialTrack }: Props) {
   const close = useCallback(() => {
     setOpenSlug(null);
   }, []);
+
+  // Anything else on the page (the hero player) can ask for a project to open.
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const slug = (e as CustomEvent<unknown>).detail;
+      if (typeof slug === 'string' && projects.some((p) => p.slug === slug)) open(slug);
+    };
+    window.addEventListener(OPEN_PROJECT_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_PROJECT_EVENT, onOpen);
+  }, [open, projects]);
 
   // Push the URL whenever openSlug changes — except on mount (the URL is
   // already correct) and except when the change came from popstate (the
@@ -131,7 +142,7 @@ export function Discography({ projects, initialTrack }: Props) {
             (triggerElRef.current ?? fallback)?.focus();
           }}
         >
-          {lastOpenProject && <ProjectDetail project={lastOpenProject} />}
+          {lastOpenProject && <ProjectDetail key={lastOpenProject.slug} project={lastOpenProject} />}
         </DialogContent>
       </Dialog>
     </div>

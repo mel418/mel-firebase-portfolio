@@ -6,7 +6,7 @@ import { SpotifyShell } from '@/components/layout/SpotifyShell';
 import { RightNowPlayingPanel } from '@/components/layout/RightNowPlayingPanel';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Discography } from '@/components/projects/Discography';
-import { ExperienceTracklist } from '@/components/ExperienceTracklist';
+import { CareerTimeline } from '@/components/experience/CareerTimeline';
 import { SkillGroups } from '@/components/skills/SkillGroups';
 import { ReleaseCard } from '@/components/education/ReleaseCard';
 import { Section } from '@/components/Section';
@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { SideB } from '@/components/contact/SideB';
 import { NowPlaying, type Song } from '@/components/NowPlaying';
 import { getNowPlaying } from '@/lib/spotify';
-import { site, projects, experience, hackathons, education, getProject } from '@/content';
+import { site, projects, timeline, education, getProject } from '@/content';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { ResumeCassette } from '@/components/props/ResumeCassette';
 import { CountUp } from '@/components/primitives/CountUp';
@@ -89,12 +89,25 @@ export default async function Home({ searchParams }: PageProps) {
 
                 {/* The name arrives letter by letter; the sr-only copy keeps
                     the heading readable as one word for assistive tech. */}
-                <h1 className="mt-10 font-headline text-6xl font-extrabold leading-[0.95] tracking-tight sm:text-8xl">
+                {/* Each word is its own nowrap block, so the line can only break
+                    between words — never inside one — and the size scales with
+                    the screen so "Melody Gatan" fits on a phone. */}
+                <h1 className="mt-10 font-headline text-[clamp(2.25rem,12.5vw,3.5rem)] font-extrabold leading-[0.95] tracking-tight sm:text-8xl">
                   <span className="sr-only">{site.name}</span>
                   <span aria-hidden="true">
-                    {[...site.name].map((ch, i) => (
-                      <span key={i} className="hero-letter" style={{ ['--i' as string]: i }}>{ch}</span>
-                    ))}
+                    {site.name.split(' ').map((word, wi, words) => {
+                      const offset = words.slice(0, wi).reduce((n, w) => n + w.length + 1, 0);
+                      return (
+                        <span key={wi}>
+                          <span className="inline-block whitespace-nowrap">
+                            {[...word].map((ch, i) => (
+                              <span key={i} className="hero-letter" style={{ ['--i' as string]: offset + i }}>{ch}</span>
+                            ))}
+                          </span>
+                          {wi < words.length - 1 && ' '}
+                        </span>
+                      );
+                    })}
                   </span>
                 </h1>
 
@@ -171,8 +184,8 @@ export default async function Home({ searchParams }: PageProps) {
         </Section>
 
         {/* ── EXPERIENCE ── */}
-        <Section id="experience" title="Experience" eyebrow="Where I've Worked">
-          <ExperienceTracklist experience={experience} hackathons={hackathons} />
+        <Section id="experience" title="Experience" eyebrow="The Story So Far" description="Work, school, hackathons and projects on one timeline. Pick any of them.">
+          <CareerTimeline entries={timeline} />
         </Section>
 
         {/* ── SKILLS ── */}

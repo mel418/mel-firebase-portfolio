@@ -30,7 +30,8 @@ export function CountUp({ value, duration = 1400 }: { value: string; duration?: 
         io.disconnect();
         const start = performance.now();
         const tick = (now: number) => {
-          const t = Math.min(1, (now - start) / duration);
+          // rAF's timestamp can land a hair before performance.now() did, so clamp both ends.
+          const t = Math.min(1, Math.max(0, (now - start) / duration));
           const eased = 1 - Math.pow(1 - t, 3);
           setText(`${(target * eased).toFixed(decimals)}${suffix}`);
           if (t < 1) raf = requestAnimationFrame(tick);

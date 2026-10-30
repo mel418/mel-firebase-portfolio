@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ArrowUpRight, Play, Trophy } from 'lucide-react';
+import { ArrowUpRight, Play, Sparkles, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TrackNumber } from '@/components/primitives/TrackNumber';
 import { cn } from '@/lib/utils';
@@ -129,7 +129,14 @@ export function ProjectCard({ project, isOpen, onOpen, variant = 'featured', fli
       <div className="flex flex-col justify-center gap-5 p-8 sm:p-12">
         <div className="flex items-center justify-between gap-4">
           <TrackNumber n={project.year} />
-          {project.status === 'live' && <LiveDot />}
+          <div className="flex items-center gap-3">
+            {project.demo && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1 text-[11px] font-semibold text-accent-ink">
+                <Sparkles className="h-3 w-3" /> Try it live
+              </span>
+            )}
+            {project.status === 'live' && <LiveDot />}
+          </div>
         </div>
         <h3 className="font-headline text-3xl font-extrabold leading-tight tracking-tight transition-colors group-hover:text-accent-ink">
           {project.title}

@@ -256,6 +256,18 @@
 .group:focus-visible .prop-spin {
   animation-play-state: running;
 }
+/* Case-study autoplay: a hairline that fills over one track's dwell time. */
+@keyframes track-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*='track-progress'] {
+    animation: none !important;
+    transform: scaleX(1);
+  }
+}
+
 /* Hero entrance: each letter of the name rises in turn, then the rest of the
    hero follows. Pure CSS, so it plays on first paint. */
 @keyframes hero-rise {
