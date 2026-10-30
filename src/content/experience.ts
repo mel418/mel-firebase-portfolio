@@ -1,4 +1,4 @@
-import type { ExperienceEntry, Hackathon } from './types';
+import type { ExperienceEntry } from './types';
 
 /**
  * Wording follows the resume (Melody_Gatan_Resume.pdf), in the resume's
@@ -38,10 +38,4 @@ export const experience: ExperienceEntry[] = [
     ],
     stack: ['php', 'mysql'],
   },
-];
-
-export const hackathons: Hackathon[] = [
-  { name: 'AWS Agents for Humans', detail: 'AI sales agent', year: '2026' },
-  { name: 'Rift Rewind', detail: 'AWS Bedrock', year: '2025' },
-  { name: 'MarinaHacks', detail: 'Discord music bot', year: '2023', result: '2nd place' },
 ];

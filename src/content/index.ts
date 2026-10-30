@@ -2,13 +2,14 @@ import { site } from './site';
 import { navTracks, sectionIds } from './nav';
 import { projects } from './projects';
 import { linerNotes } from './liner-notes';
-import { experience, hackathons } from './experience';
+import { experience } from './experience';
+import { timeline } from './timeline';
 import { skills, skillGroups, alsoWorkedWith } from './skills';
 import { education } from './education';
 import type { Skill, SkillId } from './types';
 
 export * from './types';
-export { site, navTracks, sectionIds, projects, linerNotes, experience, hackathons, skills, skillGroups, alsoWorkedWith, education };
+export { site, navTracks, sectionIds, projects, linerNotes, experience, timeline, skills, skillGroups, alsoWorkedWith, education };
 
 export type SkillWithUsage = Skill & {
   projectSlugs: string[];
