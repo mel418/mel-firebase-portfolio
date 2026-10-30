@@ -1,5 +1,6 @@
 import { AnimateIn } from '@/components/AnimateIn';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Stagger, StaggerItem } from '@/components/primitives/Stagger';
 import { alsoWorkedWith, skillGroups } from '@/content';
 
 /** The resume's four skill groups as quiet rows of chips — no icons, no
@@ -13,16 +14,16 @@ export function SkillGroups() {
           <AnimateIn key={group.label} delay={i * 60}>
             <div className="grid gap-5 py-9 sm:grid-cols-[11rem_1fr] sm:gap-10">
               <Eyebrow className="sm:pt-2">{group.label}</Eyebrow>
-              <ul className="flex flex-wrap gap-2.5">
+              <Stagger className="flex flex-wrap gap-2.5">
                 {group.items.map((item) => (
-                  <li
+                  <StaggerItem
                     key={item}
                     className="rounded-full border border-border px-4 py-1.5 text-sm text-foreground/90 transition-colors hover:border-primary/60 hover:text-accent-ink"
                   >
                     {item}
-                  </li>
+                  </StaggerItem>
                 ))}
-              </ul>
+              </Stagger>
             </div>
           </AnimateIn>
         ))}
